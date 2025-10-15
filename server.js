@@ -62,15 +62,17 @@ const generalUpload = multer({
 app.use(cors()); 
 app.use(express.json()); 
 
-// CRITICAL CORRECTION: Serve static files from the 'admin' folder statically accessible from root path (/)
-app.use(express.static(path.join(__dirname, 'admin')));
+// 🚨 CRITICAL FIX APPLIED HERE:
+// Change the static file middleware path to avoid conflict with the root route ('/')
+// Static assets (CSS/JS/Images inside 'admin') are now accessible via /admin-assets/
+app.use('/admin-assets', express.static(path.join(__dirname, 'admin')));
 
 // Serve uploaded files statically from the 'uploads' folder via the /uploads route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// A simple route to serve the client login page (which we assume is now 'admin-login.html')
+// The explicit root route now reliably serves admin-login.html
 app.get('/', (req, res) => {
-    // This explicitly sends the login file regardless of the static middleware above
+    // This explicitly sends the login file, preventing the 404 issue.
     res.sendFile(path.join(__dirname, 'admin', 'admin-login.html'));
 });
 
