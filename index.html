@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHHS Fund - Grant Program Information</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/KiSzNqo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+        /* Custom Utility Classes for Backgrounds */
+        .hero-bg {
+            background-image: url('https://i.imgur.com/aAPUokO.jpeg');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .program-bg {
+            background-color: #395777; /* DHHS primary blue */
+        }
+        .tools-bg {
+            background-color: #2b4661; /* DHHS darker blue */
+        }
+        /* Custom class for fixed headers and scroll behavior */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        .header.hidden {
+            transform: translateY(-100%);
+        }
+        .scam-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001;
+        }
+        /* Custom loader spin animation */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ffcd00;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <header id="main-header" class="header bg-[#395777] shadow-md">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-center md:justify-between">
+            <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4 mb-2 md:mb-0">
+                <img src="https://i.imgur.com/KiSzNqo.png" alt="DHHS Fund Logo" class="h-8 w-8 md:h-10 md:w-10 rounded-full">
+                <div class="text-xs md:text-xl font-bold text-white text-center">
+                    <span class="block">DEPARTMENT OF HUMAN AND HEALTH SERVICES</span>
+                </div>
+    </header>
+
+    <section class="hero-bg py-12 md:py-24 relative" id="hero-section">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center">
+            <div class="bg-white bg-opacity-80 p-4 md:p-10 rounded-xl shadow-lg">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-[#2b4661] mb-1 md:mb-2 leading-tight">DHHS Fund Releases</h1>
+                <p class="text-lg md:text-2xl font-semibold text-gray-700 mb-2 md:mb-4">DHHS Certification</p>
+                <p class="text-lg md:text-2xl font-semibold text-gray-700 mb-2 md:mb-4">Application & Related Tools</p>
+                <a href="registrationform.html" class="inline-block px-4 py-2 md:px-6 md:py-3 bg-[#395777] text-white rounded-lg font-semibold hover:bg-[#2b4661] transition-colors duration-200 shadow-md text-sm md:text-base">
+                    CLICK HERE TO APPLY NOW
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-8 md:py-16">
+        <div class="grid grid-cols-1 gap-4 md:gap-8 mb-8 md:mb-16">
+            <div class="col-span-1">
+                <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold text-[#2b4661] mb-2 md:mb-4">WHAT DOES THE DHHS FUND DO?</h2>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base mb-2 md:mb-4">
+                        The **Department of Human and Health Service Fund (DHHS Fund)** plays an important role in generating economic growth and opportunity in some of our nation’s most distressed communities. By offering tailored financial assistance and innovative programs that invest federal dollars alongside private sector capital, the DHHS Fund serves mission-driven financial institutions that take a market-based approach to supporting economically disadvantaged communities. These mission-driven organizations are encouraged to apply for DHHS Certification and participate in DHHS Fund programs that inject new sources of capital into neighborhoods that lack access to financing.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base mb-2 md:mb-4">
+                        Each business financed, each job created, and each home built represents a critical step in the transformation of a life, a family, and a community. This is real change. This is the DHHS Fund. **This is not a loan and you will never ask to pay back.**
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="weekly-winners" class="program-bg text-white py-10 md:py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-4xl font-extrabold mb-6 md:mb-8">WEEKLY WINNERS SELECTION</h2>
+            <p class="text-md md:text-lg font-light mb-6">Congratulations to our randomly selected DHHS Grant recipients for this week! <br> **Click on your row to view your detailed grant information.**</p>
+
+            <div class="max-w-xl mx-auto mb-8">
+                <input 
+                    type="text" 
+                    id="winners-search-input" 
+                    placeholder="Search by Name or Winning Code..." 
+                    class="w-full p-3 rounded-lg text-gray-800 focus:ring-[#ffcd00] focus:border-[#ffcd00] border-transparent shadow-md transition-shadow duration-300"
+                    onkeyup="filterWinnersTable()" 
+                >
+            </div>
+            
+            <div class="overflow-x-auto bg-gray-800 bg-opacity-30 p-4 rounded-xl shadow-lg">
+                <table class="w-full text-white table-auto min-w-[700px] md:min-w-full" id="winners-table">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Winner Name</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Location</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Winning Code</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Social Link</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Status</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Amount</th>
+                            <th class="py-2 px-1 md:p-3 font-extrabold text-[#ffcd00] uppercase text-xs">Payment Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody id="winners-table-body">
+                        <tr><td colspan="7" class="text-center py-8"><div class="loader"></div> Loading winners...</td></tr>
+                    </tbody>
+                </table>
+                <p id="winners-error-message" class="text-red-300 mt-4 hidden">Could not load winners. Please check the network connection or API status.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="agent-contact-section" class="tools-bg text-white py-10 md:py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-4xl font-extrabold mb-8 md:mb-12">CONTACT YOUR DEDICATED AGENT</h2>
+
+            <div class="max-w-xl mx-auto bg-white text-[#2b4661] p-6 md:p-8 rounded-xl shadow-2xl">
+
+                <img class="w-28 h-28 md:w-36 md:h-36 rounded-full mx-auto mb-4 object-cover border-4 border-[#395777]"
+                            src="https://i.imgur.com/8N6D5bJ.jpeg"
+                            alt="Agent Profile Picture">
+
+                <h3 class="text-xl md:text-2xl font-bold mb-2">Alex Johnson</h3>
+                <p class="text-sm text-gray-600 mb-4">Certified Fund Specialist | DHHS Program Expert</p>
+
+                <p class="text-xs md:text-sm font-light mb-6 md:mb-10 text-gray-700">
+                    Hi! I'm here to personally assist you with all your DHHS Fund inquiries. With over 5 years of experience, I provide clear, compliant guidance to help you access and manage your resources effectively. Reach out today!
+                </p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="mailto:alex.johnson@dhhsfund.org" class="flex items-center justify-center p-3 rounded-lg text-white bg-red-600 hover:bg-red-700 transition duration-300 shadow text-sm font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>Email Me</span>
+                    </a>
+
+                    <a href="sms:+15551234567" class="flex items-center justify-center p-3 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition duration-300 shadow text-sm font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2m-7-5l3 3m0 0l-3 3m3-3H9"></path></svg>
+                        <span>Text (555) 123-4567</span>
+                    </a>
+
+                    <a href="https://wa.me/15551234567" target="_blank" class="flex items-center justify-center p-3 rounded-lg text-white bg-green-500 hover:bg-green-600 transition duration-300 shadow text-sm font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.038 2.01c-5.521 0-9.988 4.47-9.988 9.99 0 1.708.438 3.322 1.258 4.773l-1.31 4.793 4.88-1.28c1.4-.748 2.978-1.144 4.66-1.144 5.52 0 9.988-4.47 9.988-9.99S17.558 2.01 12.038 2.01zm4.98 12.07c-.15.42-.83.74-1.13.84-.3.1-.64.15-.99.05-.35-.1-.75-.27-1.17-.46-.42-.2-.88-.47-1.32-.7-.44-.24-1.02-.64-1.6-.99-.57-.35-1.17-.67-1.77-1.02-.6-.35-1.17-.74-1.57-1.14-.4-.4-.73-.85-.92-1.3-.19-.45-.29-.93-.29-1.44 0-.46.12-.9.35-1.28.23-.38.56-.62.96-.82.4-.2.8-.29 1.14-.29.17 0 .34.02.5.06.16.04.32.1.48.18.16.08.32.2.48.33.16.13.3.28.43.46.13.18.25.39.37.62.1.2.19.42.26.65.07.23.1.47.1.72 0 .25-.03.5-.1.74-.07.24-.16.48-.28.72-.12.24-.26.47-.43.7-.17.23-.37.45-.6.67-.23.22-.48.42-.76.62-.28.2-.58.39-.9.57-.32.18-.65.34-1.0.48-.35.14-.72.26-1.11.36-.38.1-.79.14-1.2.14-.84 0-1.55-.3-2.12-.9-.57-.6-.85-1.3-.85-2.12 0-.84.3-1.55.9-2.12.6-.57 1.3-.85 2.12-.85.4 0 .78.07 1.14.2.36.13.68.32.96.57.28.25.5.55.66.9.16.35.24.73.24 1.14 0 .39-.07.75-.2 1.08-.13.33-.32.6-.57.8-.25.2-.55.33-.9.4-.35.07-.73.1-1.14.1s-.75-.07-1.08-.2c-.33-.13-.6-.32-.8-.57-.2-.25-.33-.55-.4-.9-.07-.35-.1-.73-.1-1.14 0-1.05.3-2.06.9-3.03.6-.97 1.4-1.78 2.4-2.43 1-.65 2.1-1.08 3.3-1.28 1.2-.2 2.4-.1 3.5.3 1.1.4 2.1.9 2.9 1.7.8.8 1.4 1.8 1.8 2.9.4 1.1.5 2.3.3 3.5-.2 1.2-.6 2.3-1.3 3.3z"></path></svg>
+                        <span>WhatsApp</span>
+                    </a>
+
+                    <a href="https://facebook.com/alexjohnsonagent" target="_blank" class="flex items-center justify-center p-3 rounded-lg text-white bg-blue-800 hover:bg-blue-900 transition duration-300 shadow text-sm font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.04C6.54 2.04 2.04 6.54 2.04 12c0 4.84 3.4 8.87 7.87 9.87V14.6h-2.1v-2.5h2.1V10c0-2.07 1.26-3.23 3.12-3.23.88 0 1.64.07 1.87.1v2.16h-1.28c-1.01 0-1.2.48-1.2 1.18v1.54h2.5l-.4 2.5h-2.1V22c4.47-1 7.87-5.03 7.87-9.87 0-5.46-4.5-9.96-9.96-9.96z"></path></svg>
+                        <span>Facebook</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="winner-gallery" class="bg-gray-100 py-10 md:py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-[#2b4661] mb-6 md:mb-10">MEET OUR RECENT WINNERS!</h2>
+            <p class="text-lg text-gray-700 max-w-3xl mx-auto mb-10">
+                See the impact of the DHHS Fund firsthand. These are just a few of the individuals and families receiving a grant this week.
+            </p>
+
+            <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    <img class="w-full h-32 sm:h-40 object-cover" src="https://i.imgur.com/AXKciO7.jpeg" alt="Winner Sarah Chen">
+                    <div class="p-3 md:p-4">
+                        <p class="font-bold text-base md:text-lg text-[#395777] leading-snug">Kelly Mining</p>
+                        <p class="text-xs text-gray-500 mt-1">New York, NY</p>
+                        <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">
+                            DELIVERED $47,295
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    <img class="w-full h-32 sm:h-40 object-cover" src="https://i.imgur.com/NqCpjYh.jpeg" alt="Winner David Rodriguez">
+                    <div class="p-3 md:p-4">
+                        <p class="font-bold text-base md:text-lg text-[#395777] leading-snug">Mary Rodriguez</p>
+                        <p class="text-xs text-gray-500 mt-1">Ontario, Canada</p>
+                        <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full">
+                            DELIVERED $125,000 
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    <img class="w-full h-32 sm:h-40 object-cover" src="https://i.imgur.com/9mccU4F.jpeg" alt="Winner Emily White">
+                    <div class="p-3 md:p-4">
+                        <p class="font-bold text-base md:text-lg text-[#395777] leading-snug">Mark B</p>
+                        <p class="text-xs text-gray-500 mt-1">Perth, Australia</p>
+                        <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">
+                            DELIVERED $250,000 
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    <img class="w-full h-32 sm:h-40 object-cover" src="https://i.imgur.com/ubbtaF0.jpeg" alt="Winner Jamal Carter">
+                    <div class="p-3 md:p-4">
+                        <p class="font-bold text-base md:text-lg text-[#395777] leading-snug">Michelle Anguilar</p>
+                        <p class="text-xs text-gray-500 mt-1">Chicago, IL</p>
+                        <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white bg-gray-500 rounded-full">
+                            DELIVERED $52,765
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                    <img class="w-full h-32 sm:h-40 object-cover" src="https://i.imgur.com/1zGzmMq.jpeg" alt="Winner Lisa Miller">
+                    <div class="p-3 md:p-4">
+                        <p class="font-bold text-base md:text-lg text-[#395777] leading-snug">Lisa Miller</p>
+                        <p class="text-xs text-gray-500 mt-1">Seattle, WA</p>
+                        <span class="inline-block mt-2 px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full">
+                            DELIVERED $175,000
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="bg-gray-800 text-gray-300 py-8 md:py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8 mb-4 md:mb-8">
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">ABOUT</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">Careers</a></li>
+                        <li><a href="#" class="hover:underline">Community Development Advisory Board</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">PROGRAMS & TRAINING</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">Certification</a></li>
+                        <li><a href="#" class="hover:underline">Programs</a></li>
+                        <li><a href="#" class="hover:underline">Training & TA</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">TOOLS & RESOURCES</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">AMIS</a></li>
+                        <li><a href="#" class="hover:underline">CIMS Mapping Tool</a></li>
+                        <li><a href="#" class="hover:underline">Compliance and Performance Reporting Resources</a></li>
+                        <li><a href="#" class="hover:underline">Opportunity Zones Resources</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">AWARDS</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">Searchable Awards Database</a></li>
+                        <li><a href="#" class="hover:underline">AMTC Allocates States Served</a></li>
+                        <li><a href="#" class="hover:underline">Historical Award Documents</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">RESEARCH & DATA</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">Research Reports</a></li>
+                        <li><a href="#" class="hover:underline">Data Resources</a></li>
+                        <li><a href="#" class="hover:underline">Exam Eligibility Guidance</a></li>
+                        <li><a href="#" class="hover:underline">Swap Stat</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-1 md:mb-2 text-sm">NEWS & EVENTS</h4>
+                    <ul class="space-y-1 text-xs md:text-sm">
+                        <li><a href="#" class="hover:underline">Announcements</a></li>
+                        <li><a href="/admin/admin-login.html" class="hover:underline">Message from the Director</a></li>
+                        <li><a href="#" class="hover:underline">Request for Comments</a></li>
+                        <li><a href="#" class="hover:underline">Upcoming Events</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-4 md:pt-8 mt-4 md:mt-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-center md:text-left">
+                <div class="text-white text-xs md:text-sm">
+                    DEPARTMENT OF HUMAN AND HEALTH SERVICES<br>
+                    UNITED STATES DEPARTMENT OF THE TREASURY
+                </div>
+                <div class="flex items-center space-x-3 md:space-x-4">
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors duration-200" aria-label="Twitter">
+                        <svg class="h-5 w-5 md:h-6 md:w-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.46 6c-.77.34-1.6.57-2.46.68.89-.54 1.57-1.4 1.89-2.5a4.34 4.34 0 01-2.73 1.05 4.38 4.38 0 01-7.48-3.99A12.42 12.42 0 013 10.4a12.39 12.39 0 01-.64-3.6 4.37 4.37 0 001.35 5.86 4.34 4.34 0 01-1.98-.55v.05a4.38 4.38 0 003.5 4.3 4.38 4.38 0 01-1.97.07 4.38 4.38 0 004.09 3.04A8.76 8.76 0 01.3 19.78a12.37 12.37 0 006.7 1.95c8.04 0 12.44-6.65 12.44-12.44v-.56a8.97 8.97 0 002.2-2.31z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors duration-200" aria-label="LinkedIn">
+                        <svg class="h-5 w-5 md:h-6 md:w-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4a2 2 0 00-2 2v16a2 2 0 002 2h16a2 2 0 002-2V4a2 2 0 00-2-2zM8 19H5v-9h3v9zM6.5 8.2a1.7 1.7 0 110-3.4 1.7 1.7 0 010 3.4zM19 19h-3v-4.5a1.5 1.5 0 00-3 0V19h-3v-9h3v1.1a4.9 4.9 0 014.1-1.1c4.5 0 5.4 3.4 5.4 7.5V19z"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors duration-200" aria-label="Facebook">
+                        <svg class="h-5 w-5 md:h-6 md:w-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 5.8a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-7 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm4.5 9.7a7 7 0 01-7 0h14a7 7 0 01-7 0z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="winner-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[2000] hidden flex justify-center items-center p-4" onclick="closeModal(event)">
+        <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full transform transition-all overflow-hidden" onclick="event.stopPropagation()">
+            <div class="program-bg text-white p-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold">Winner Recipient Details</h3>
+                <button onclick="hideModal()" class="text-white hover:text-[#ffcd00] transition-colors duration-200" aria-label="Close Modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 text-gray-800 flex flex-col items-center">
+                <img id="modal-winner-image" src="https://i.imgur.com/v8tT9oP.jpeg" alt="Winner Profile" class="w-32 h-32 rounded-full object-cover border-4 border-[#ffcd00] mb-4">
+                
+                <h4 id="modal-winner-name" class="text-3xl font-extrabold text-[#2b4661] mb-1"></h4>
+                <p id="modal-winner-location" class="text-lg text-gray-600 mb-4"></p>
+                
+                                <div class="text-center bg-green-100 border-l-4 border-green-500 text-green-800 p-4 mb-6 w-full max-w-md rounded-md" role="alert">
+                    <p class="font-bold text-lg">Congratulations!</p>
+                    <p class="text-sm">You have been successfully selected as a winner recipient.</p>
+                </div>
+                                <div class="w-full space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600">Winning Code:</span>
+                        <span id="modal-winner-code" class="font-bold text-[#395777]"></span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600">Grant Amount:</span>
+                        <span id="modal-winner-amount" class="font-bold text-green-600 text-xl"></span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600">Status:</span>
+                        <span id="modal-winner-status" class="font-bold"></span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600">Processing Fee:</span>
+                        <span id="modal-winner-fee" class="font-bold text-red-600"></span>
+                    </div>
+                    <div class="text-center pt-2">
+                        <a id="modal-winner-contact" 
+                           href="#agent-contact-section" 
+                           class="inline-block px-6 py-2 bg-[#ffcd00] text-[#2b4661] font-bold rounded-lg hover:bg-yellow-400 transition duration-200"
+                           onclick="handleAgentContact(event)">
+                            CONTACT YOUR AGENT
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // --- CONFIG ---
+    const API_BASE_URL = window.location.origin; 
+    const WINNERS_ENDPOINT = `${API_BASE_URL}/api/winners`;
+    
+    // Global variable to store fetched data
+    window.allWinnersData = []; 
+
+    // --- Utility Functions ---
+
+    /**
+     * Formats a number as a currency string.
+     */
+    function formatCurrency(amount, currencySymbol) {
+        const symbol = currencySymbol || '$';
+        const numericAmount = parseFloat(amount);
+        if (isNaN(numericAmount)) return `${symbol}0`;
+        
+        const formattedAmount = new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(numericAmount);
+        return `${symbol}${formattedAmount}`;
+    }
+
+    /**
+     * Generates the HTML for a single row in the winners table.
+     * The image is initially rendered with the 'hidden' class as requested.
+     */
+    function createWinnerTableRow(winner, index) {
+        const winningAmountFormatted = formatCurrency(winner.amount, winner.currency);
+        const paymentFeeFormatted = formatCurrency(winner.fee, winner.feeCurrency);
+        const socialLink = winner.social && winner.social.startsWith('http') 
+            ? `<a href="${winner.social}" target="_blank" class="text-[#ffcd00] hover:underline">Profile</a>` 
+            : '<span class="text-gray-400">N/A</span>';
+        
+        // Use 'image' or 'imageUrl' from the data, or a fallback
+        const profileImage = winner.image || winner.imageUrl || 'default-avatar.png'; 
+        
+        // IMPORTANT: The image element is added here and starts hidden using the 'hidden' class
+        return `
+            <tr class="hover:bg-gray-700 hover:bg-opacity-40 transition-colors duration-200 border-b border-gray-600 cursor-pointer" onclick="showWinnerDetails(${index})">
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">
+                    <div class="flex items-center space-x-2">
+                        <img src="${profileImage}" alt="${winner.name} Profile" class="h-8 w-8 rounded-full object-cover sm:block winner-profile-image hidden"/>
+                        <span class="font-medium">${winner.name}</span>
+                    </div>
+                </td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${winner.location}</td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${winner.code}</td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${socialLink}</td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${winner.status}</td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${winningAmountFormatted}</td>
+                <td class="py-2 px-1 md:p-3 text-xs md:text-sm">${paymentFeeFormatted}</td>
+            </tr>
+        `;
+    }
+    
+    /**
+     * Renders the winners table with data from an array.
+     */
+    function renderWinners(winnersArray) {
+        const tableBody = document.getElementById('winners-table-body');
+        window.allWinnersData = winnersArray; // Store data globally
+        if (winnersArray.length > 0) {
+            tableBody.innerHTML = winnersArray.map((winner, index) => createWinnerTableRow(winner, index)).join('');
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No winners found.</td></tr>';
+        }
+    }
+    
+    /**
+     * Fetches all winners from the API and populates the table.
+     */
+    async function fetchWinners() {
+        try {
+            const response = await fetch(WINNERS_ENDPOINT);
+            let winners;
+
+            if (!response.ok) {
+                // Fallback data for demonstration if API fails or isn't available
+                console.warn(`API call failed with status: ${response.status}. Using fallback data.`);
+                winners = [
+                    // Ensure the 'image' field is present in fallback data
+                    { name: "John Doe", location: "Los Angeles, CA", code: "DHHS-3321", social: "https://facebook.com/johndoe", status: "PENDING", amount: 125000, currency: "$", fee: 499, feeCurrency: "$", image: "https://i.imgur.com/eD65P1d.jpeg" },
+                    { name: "Maria Garcia", location: "Houston, TX", code: "DHHS-4509", social: "", status: "PAID", amount: 150000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/qL8W7Jt.jpeg" },
+                    { name: "Alex Chen", location: "Seattle, WA", code: "DHHS-1987", social: "https://twitter.com/alexchen", status: "VERIFICATION", amount: 100000, currency: "$", fee: 599, feeCurrency: "$", image: "https://i.imgur.com/2sR9p0k.jpeg" },
+                    { name: "Fatima Khan", location: "Detroit, MI", code: "DHHS-7701", social: "https://instagram.com/fatimakhan", status: "PENDING", amount: 200000, currency: "$", fee: 999, feeCurrency: "$", image: "https://i.imgur.com/v8tT9oP.jpeg" },
+                    { name: "Robert Jones", location: "Orlando, FL", code: "DHHS-6345", social: "https://facebook.com/robertjones", status: "PAID", amount: 175000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/O6L0Q1V.jpeg" }
+                ];
+            } else {
+                winners = await response.json();
+            }
+            renderWinners(winners);
+
+        } catch (error) {
+            console.error('Fetch Winners Error:', error);
+            document.getElementById('winners-table-body').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error loading data. See console for details.</td></tr>';
+            document.getElementById('winners-error-message').classList.remove('hidden');
+        }
+    }
+    
+    // --- MODAL LOGIC ---
+    
+    /**
+     * Populates the modal with the selected winner's details and shows it.
+     */
+    window.showWinnerDetails = function(index) {
+        const winner = window.allWinnersData[index];
+        if (!winner) return;
+
+        // Use 'image' or 'imageUrl' from the data, or a fallback
+        const profileImage = winner.image || winner.imageUrl || 'https://i.imgur.com/v8tT9oP.jpeg'; 
+        
+        // Get modal elements
+        const modal = document.getElementById('winner-modal');
+
+        // 1. UPDATE MODAL CONTENT
+        document.getElementById('modal-winner-image').src = profileImage;
+        document.getElementById('modal-winner-name').textContent = winner.name;
+        document.getElementById('modal-winner-location').textContent = winner.location;
+        document.getElementById('modal-winner-code').textContent = winner.code;
+        document.getElementById('modal-winner-amount').textContent = formatCurrency(winner.amount, winner.currency);
+        document.getElementById('modal-winner-fee').textContent = formatCurrency(winner.fee, winner.feeCurrency);
+        
+        // 2. STATUS STYLING CORRECTION
+        const statusElement = document.getElementById('modal-winner-status');
+        
+        statusElement.textContent = winner.status;
+
+        // Reset classes and apply text colors (Matching the modal HTML)
+        statusElement.classList.remove('text-green-600', 'text-yellow-600', 'text-red-600', 'text-gray-600');
+
+        if (winner.status.toUpperCase() === 'PAID') {
+            statusElement.classList.add('text-green-600');
+        } else if (winner.status.toUpperCase() === 'PENDING') {
+            statusElement.classList.add('text-yellow-600');
+        } else if (winner.status.toUpperCase() === 'VERIFICATION') {
+            statusElement.classList.add('text-red-600');
+        } else {
+            statusElement.classList.add('text-gray-600');
+        }
+
+        // 3. SHOW MODAL
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden'); 
+    }
+
+    /**
+     * Hides the modal.
+     */
+    window.hideModal = function() {
+        document.getElementById('winner-modal').classList.add('hidden');
+        document.getElementById('winner-modal').classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    /**
+     * Closes the modal if the backdrop is clicked.
+     */
+    window.closeModal = function(event) {
+        if (event.target.id === 'winner-modal') {
+            hideModal();
+        }
+    }
+
+    // --- NEW FUNCTION: Handles Contact Agent button click in modal ---
+    window.handleAgentContact = function(event) {
+        // Prevent the default anchor jump immediately to allow JS to control the flow
+        event.preventDefault(); 
+        
+        const modal = document.getElementById('winner-modal');
+        if (modal) {
+            // 1. Hide the modal instantly
+            hideModal();
+        }
+        
+        // 2. Smoothly scroll to the target section (agent-contact-section)
+        const targetId = event.currentTarget.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            // Use a short timeout to ensure the DOM updates (modal removal) happen before scroll
+            setTimeout(() => {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }, 10);
+        }
+    }
+
+
+    // --- Event Listeners and Initial Setup ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const scamAlertBanner = document.getElementById('scam-alert-banner');
+        const mainHeader = document.getElementById('main-header');
+        
+        const adjustHeaderPositions = () => {
+            // Check if elements exist before getting offsetHeight
+            const scamAlertHeight = scamAlertBanner ? scamAlertBanner.offsetHeight : 0;
+            const mainHeaderHeight = mainHeader ? mainHeader.offsetHeight : 0;
+            
+            if (mainHeader) {
+                mainHeader.style.top = scamAlertHeight + 'px';
+            }
+
+            const totalFixedHeaderHeight = mainHeaderHeight + scamAlertHeight; 
+            document.body.style.paddingTop = totalFixedHeaderHeight + 'px';
+        };
+
+        // Initial setup and resize listener
+        adjustHeaderPositions();
+        window.addEventListener('resize', adjustHeaderPositions);
+
+        fetchWinners();
+    });
+
+    // Header Scroll Hide Logic
+    let lastScrollY = 0;
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('main-header');
+        if (!header) return;
+
+        if (window.scrollY > lastScrollY && window.scrollY > 100) { // Scrolling down and past initial height
+            header.classList.add('hidden'); 
+        } else { // Scrolling up or near the top
+            header.classList.remove('hidden');
+        }
+        lastScrollY = window.scrollY;
+    }, { passive: true });
+
+
+    // --- WINNERS TABLE SEARCH FUNCTIONALITY (WITH IMAGE TOGGLE) ---
+    window.filterWinnersTable = function() {
+        let input, filter, tableBody, tr, nameContainer, code_td, i, txtValueName, txtValueCode, profileImageElement;
+        input = document.getElementById("winners-search-input");
+        // Check if the input value is empty
+        const isSearchEmpty = input.value.trim() === ''; 
+        filter = input.value.toUpperCase();
+        tableBody = document.getElementById("winners-table-body");
+        tr = tableBody.getElementsByTagName("tr");
+
+        // Loop through all table rows
+        for (i = 0; i < tr.length; i++) {
+            if (tr[i].getElementsByTagName("td").length > 1) {
+                // Name is in the first column, which now holds the image container
+                nameContainer = tr[i].getElementsByTagName("td")[0]; 
+                code_td = tr[i].getElementsByTagName("td")[2];
+                // Select the specific image inside the first column
+                profileImageElement = nameContainer ? nameContainer.querySelector('.winner-profile-image') : null;
+                
+                if (nameContainer && code_td) {
+                    // Get the text content for comparison
+                    // We need to safely get the name text, which is inside a <span>
+                    txtValueName = nameContainer.querySelector('span')?.textContent || nameContainer.innerText;
+                    txtValueCode = code_td.textContent || code_td.innerText;
+
+                    const isMatch = txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueCode.toUpperCase().indexOf(filter) > -1;
+
+                    if (isMatch) {
+                        tr[i].style.display = "";
+                        // If it's a match, show the image
+                        if (profileImageElement) {
+                            profileImageElement.classList.remove('hidden');
+                        }
+                    } else {
+                        tr[i].style.display = "none";
+                        // If it doesn't match, hide the image
+                        if (profileImageElement) {
+                            profileImageElement.classList.add('hidden');
+                        }
+                    }
+                    
+                    // SPECIAL CASE: If the search box is empty, show all rows but hide all images
+                    if (isSearchEmpty) {
+                        tr[i].style.display = "";
+                        if (profileImageElement) {
+                            profileImageElement.classList.add('hidden');
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script src="i18n.js" type="application/javascript"></script>
+</body>
+</html>

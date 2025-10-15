@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - DHHS Fund</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Tailwind Colors (Modern & Standard) */
+        :root {
+            --primary-blue: #3B82F6; /* Tailwind blue-500 */
+            --dark-blue: #1D4ED8;    /* Tailwind blue-700 */
+            --header-bg: #395777;    /* Deep Blue/Teal for header */
+            --focus-ring-color: #3B82F6;
+        }
+
+        /* Applying the Inter font globally */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Focus Ring Utility */
+        .focus-ring-primary:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px var(--primary-blue);
+        }
+
+        /* Apply custom header background */
+        .header {
+            background-color: var(--header-bg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <header id="main-header" class="header shadow-lg fixed top-0 left-0 right-0 z-10">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-center md:justify-between">
+            <div class="flex flex-col md:flex-row items-center space-y-1 md:space-y-0 md:space-x-3">
+                <img src="https://placehold.co/40x40/395777/ffffff?text=DHHS" alt="DHHS Fund Logo Placeholder" class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white p-1 shadow-inner">
+                <div class="text-xs md:text-xl font-extrabold text-white text-center tracking-wide">
+                    <span class="block">DEPARTMENT OF HUMAN AND HEALTH SERVICES</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6" style="padding-top: 80px;">
+        <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 md:p-10 transition-all duration-300 transform hover:shadow-3xl">
+            
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-[var(--dark-blue)] tracking-tight">Admin Portal</h1>
+                <p class="text-gray-500 mt-2 text-md">Secure access to manage DHHS Fund data.</p>
+            </div>
+
+            <div id="message-container" class="mb-4 hidden p-3 rounded-xl text-sm transition duration-300 border font-medium"></div>
+
+            <div id="auth-forms">
+
+                <form id="login-form">
+                    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Sign In</h2>
+                    
+                    <div class="mb-4">
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="login-email" name="email" required
+                               placeholder="admin@dhhs.gov"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="login-password" name="password" required
+                               placeholder="********"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full py-3 bg-[var(--primary-blue)] text-white font-bold rounded-lg hover:bg-[var(--dark-blue)] transition duration-300 shadow-md transform hover:scale-[1.01]">
+                        Log In Securely
+                    </button>
+                </form>
+
+                <form id="register-form" class="hidden"> 
+                    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Create Admin Account</h2>
+                    
+                    <div class="mb-4">
+                        <label for="register-email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="register-email" name="email" required placeholder="new.admin@dhhs.gov"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="register-password" name="password" required placeholder="********"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" name="confirm_password" required placeholder="********"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 shadow-md transform hover:scale-[1.01]">
+                        Create Account
+                    </button>
+                </form>
+
+                <form id="forgot-password-form" class="hidden">
+                    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Password Reset</h2>
+                    
+                    <p class="text-sm text-gray-600 mb-6 text-center">
+                        Enter your email address and we'll send a secure link to reset your password.
+                    </p>
+                    
+                    <div class="mb-6">
+                        <label for="forgot-email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="forgot-email" name="email" required placeholder="admin@dhhs.gov"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus-ring-primary transition duration-200">
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full py-3 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-700 transition duration-300 shadow-md transform hover:scale-[1.01]">
+                        Send Reset Link
+                    </button>
+                </form>
+
+                <div id="auth-links" class="text-center mt-6 space-y-2 text-sm">
+                    
+                    <div id="login-links" class="block">
+                        <button type="button" onclick="showForm('forgot-password')" class="text-gray-500 hover:text-red-600 transition duration-150 block w-full focus:outline-none py-1">
+                            Forgot Password?
+                        </button>
+                        <button type="button" onclick="showForm('register')" class="text-[var(--primary-blue)] hover:text-[var(--dark-blue)] transition duration-150 block w-full focus:outline-none py-1 font-semibold">
+                            Need an account? Sign Up
+                        </button>
+                    </div>
+
+                    <div id="register-links" class="hidden">
+                        <button type="button" onclick="showForm('login')" class="text-[var(--primary-blue)] hover:text-[var(--dark-blue)] transition duration-150 text-sm focus:outline-none py-1 font-semibold">
+                            Already have an account? Sign In
+                        </button>
+                    </div>
+
+                    <div id="forgot-password-links" class="hidden">
+                        <button type="button" onclick="showForm('login')" class="text-[var(--primary-blue)] hover:text-[var(--dark-blue)] transition duration-150 text-sm focus:outline-none py-1 font-semibold">
+                            &larr; Back to Login
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:5000/api/auth'; 
+
+        // DOM Elements
+        const messageContainer = document.getElementById('message-container');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const forgotForm = document.getElementById('forgot-password-form');
+        
+        // Utility function to display messages
+        function displayMessage(message, type = 'error') {
+            messageContainer.textContent = message;
+            messageContainer.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'border-red-400', 'border-green-400');
+
+            if (type === 'success') {
+                messageContainer.classList.add('bg-green-100', 'text-green-800', 'border-green-400');
+            } else {
+                // Default to error/warning styling
+                messageContainer.classList.add('bg-red-100', 'text-red-800', 'border-red-400');
+            }
+            messageContainer.classList.remove('hidden');
+
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                messageContainer.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Utility function to toggle form visibility
+        window.showForm = function(formName) { // Expose to global scope for onclick attributes
+            // Clear any lingering messages
+            messageContainer.classList.add('hidden');
+            
+            // Define all form IDs and link container IDs
+            const formIds = ['login-form', 'register-form', 'forgot-password-form'];
+            const linkIds = ['login-links', 'register-links', 'forgot-password-links'];
+            
+            // Determine the target form and link containers
+            const targetFormId = formName + '-form';
+            const targetLinkId = formName + '-links';
+
+            // Hide all forms and links
+            formIds.forEach(id => document.getElementById(id).classList.add('hidden'));
+            linkIds.forEach(id => document.getElementById(id).classList.add('hidden'));
+
+            // Show the requested form and its corresponding links
+            const targetForm = document.getElementById(targetFormId);
+            const targetLinks = document.getElementById(targetLinkId);
+
+            if (targetForm) {
+                targetForm.classList.remove('hidden');
+                targetForm.reset(); // Clear form fields
+            }
+            if (targetLinks) {
+                targetLinks.classList.remove('hidden');
+            }
+        }
+
+        // --- 3.1. LOGIN FORM HANDLER ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Successful login
+                    localStorage.setItem('adminToken', data.token);
+                    displayMessage('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500); 
+
+                } else {
+                    // Login failed
+                    displayMessage(data.message || 'Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
+            }
+        });
+
+        // --- 3.2. REGISTER FORM HANDLER ---
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                return displayMessage('Passwords do not match!');
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Successful registration
+                    localStorage.setItem('adminToken', data.token);
+                    displayMessage('Account created! Logging in...', 'success');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500); 
+
+                } else {
+                    // Registration failed
+                    displayMessage(data.message || 'Registration failed. The email might already be in use.');
+                }
+            } catch (error) {
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
+            }
+        });
+
+        // --- 3.3. FORGOT PASSWORD FORM HANDLER ---
+        forgotForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                // The backend returns a generic success message for security
+                if (response.ok) {
+                    displayMessage(data.message || "If an account exists, a reset link has been sent.", 'success');
+                    // Switch back to login after receiving the success message
+                    setTimeout(() => showForm('login'), 3000);
+                } else {
+                    displayMessage(data.message || 'Failed to process reset request.');
+                }
+            } catch (error) {
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
+            }
+        });
+    </script>
+
+</body>
+</html>

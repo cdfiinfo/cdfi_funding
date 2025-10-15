@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/KiSzNqo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .form-section-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .two-columns {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        @media (min-width: 768px) {
+            .two-columns {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        .loading-modal, .error-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            color: white;
+            font-size: 1.25rem;
+            text-align: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+            padding: 1.5rem; /* p-6 */
+            max-width: 24rem; /* max-w-sm */
+            width: 100%;
+            text-align: center;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .modal-content.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        /* Custom responsive adjustments for better mobile experience */
+        @media (max-width: 767px) {
+            .input-group label {
+                font-size: 0.875rem; /* text-sm */
+            }
+            .input-group input, .input-group select {
+                padding: 0.5rem; /* p-2 */
+                font-size: 0.875rem; /* text-sm */
+            }
+            .checkbox-label span {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <header id="main-header" class="header bg-[#395777] shadow-md">
+        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-center md:justify-between">
+            <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4 mb-2 md:mb-0">
+                <img src="https://i.imgur.com/KiSzNqo.png" alt="CDFI Fund Logo" class="h-8 w-8 md:h-10 md:w-10 rounded-full">
+                <div class="text-xs md:text-xl font-bold text-white text-center">
+                    <span class="block">DEPARTMENT OF HUMAN AND HEALTH SERVICES</span>
+                </div>
+            </div>
+            <a href="index.html" class="mt-2 md:mt-0 px-2 py-1 md:px-4 md:py-2 bg-[#ffcd00] text-[#2b4661] rounded-lg font-semibold hover:bg-yellow-500 transition-colors duration-200 shadow-md text-xs">BACK TO HOMEPAGE</a>
+        </div>
+    </header>
+    
+    <main class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 sm:p-6 md:p-10 my-8 mx-auto flex-grow">
+        <form id="registrationForm" class="space-y-6">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800">Registration Form</h2>
+            <p class="text-center text-gray-600 mb-8 text-sm sm:text-base">WE NEED YOU TO PROVIDE US YOUR NEEDS FOR APPLYING FOR THIS PROGRAM</p>
+
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Select Your Needs (Check all that apply):</h3>
+                <div class="checkbox-group grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="home_repair" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Home Repair</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="mortgage_payment" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Mortgage Payment</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="rent" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Rent</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="school_supplies" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">School Supplies</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="real_estate_taxes" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Real Estate Taxes</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="utility_bills" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Utility Bills</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="personal_car" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Personal Car</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="groceries" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Groceries</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="child_care" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Child Care/Day Care</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="medical_bills" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Medical Bills</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="business_setup" class="rounded text-blue-600 focus:ring-ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Business Setup</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="general_living" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">General Living Expenses</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="housing_assistance" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Housing Assistance</span>
+                    </label>
+                    <label class="checkbox-label flex items-center space-x-2">
+                        <input type="checkbox" name="needs[]" value="others" class="rounded text-blue-600 focus:ring-blue-500">
+                        <span class="text-gray-700 text-sm sm:text-base">Others</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Personal Information</h3>
+                <div class="form-section-grid two-columns">
+                    <div class="input-group flex flex-col">
+                        <label for="first-name" class="text-sm font-medium text-gray-700 mb-1">1. First Name</label>
+                        <input type="text" id="first-name" name="first_name" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="last-name" class="text-sm font-medium text-gray-700 mb-1">2. Last Name</label>
+                        <input type="text" id="last-name" name="last_name" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="middle-name" class="text-sm font-medium text-gray-700 mb-1">Middle Name</label>
+                        <input type="text" id="middle-name" name="middle_name" class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="sex" class="text-sm font-medium text-gray-700 mb-1">5. Sex</label>
+                        <select id="sex" name="sex" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">Select...</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="dob" class="text-sm font-medium text-gray-700 mb-1">6. Date of Birth</label>
+                        <input type="date" id="dob" name="dob" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="occupation" class="text-sm font-medium text-gray-700 mb-1">7. Occupation</label>
+                        <input type="text" id="occupation" name="occupation" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="education-level" class="text-sm font-medium text-gray-700 mb-1">8. Education Level</label>
+                        <select id="education-level" name="education_level" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">Select...</option>
+                            <option value="high-school">High School</option>
+                            <option value="some-college">Some College</option>
+                            <option value="associates">Associate's Degree</option>
+                            <option value="bachelors">Bachelor's Degree</option>
+                            <option value="masters">Master's Degree</option>
+                            <option value="phd">PhD or higher</option>
+                        </select>
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="residency" class="text-sm font-medium text-gray-700 mb-1">9. Do you own or rent where you live?</label>
+                        <select id="residency" name="residency" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">Select...</option>
+                            <option value="own">Own</option>
+                            <option value="rent">Rent</option>
+                        </select>
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="email" class="text-sm font-medium text-gray-700 mb-1">10. Email Address</label>
+                        <input type="email" id="email" name="email" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="payment-method" class="text-sm font-medium text-gray-700 mb-1">11. How Do You Wish To Receive Your Winnings?</label>
+                        <select id="payment-method" name="payment_method" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">Select...</option>
+                            <option value="check">Check</option>
+                            <option value="cash">Cash</option>
+                            <option value="direct_deposit">Direct Deposit</option>
+                            <option value="bitcoin">Bitcoin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-4 mt-6">
+                    <div class="input-group flex flex-col">
+                        <label for="street-address" class="text-sm font-medium text-gray-700 mb-1">3. Street Address</label>
+                        <input type="text" id="street-address" name="street_address" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="form-section-grid two-columns">
+                        <div class="input-group flex flex-col">
+                            <label for="city" class="text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" id="city" name="city" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="state" class="text-sm font-medium text-gray-700 mb-1">State</label>
+                            <input type="text" id="state" name="state" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="zip-code" class="text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+                            <input type="text" id="zip-code" name="zip_code" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="country" class="text-sm font-medium text-gray-700 mb-1">Country</label>
+                            <input type="text" id="country" name="country" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="text-number" class="text-sm font-medium text-gray-700 mb-1">4. Text Number</label>
+                        <input type="tel" id="text-number" name="text_number" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="monthly-income" class="text-sm font-medium text-gray-700 mb-1">12. Monthly Income</label>
+                        <div class="currency-input-group flex space-x-2">
+                            <input type="text" id="currency-symbol" name="currency_symbol" placeholder="$" required class="w-1/4 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <input type="number" id="monthly-income" name="monthly_income" placeholder="Amount" required class="w-3/4 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="how-heard" class="text-sm font-medium text-gray-700 mb-1">13. How did you hear about this program?</label>
+                        <input type="text" id="how-heard" name="how_heard" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Social Handles</h3>
+                <div id="social-handles-container" class="space-y-4">
+                    <div class="input-group social-handle-group grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="social-platform-0" class="text-sm font-medium text-gray-700 mb-1">14. Social Platform</label>
+                            <select id="social-platform-0" name="social_platform[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <option value="">Select...</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="snapchat">Snapchat</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="social-handle-0" class="text-sm font-medium text-gray-700 mb-1">Handle</label>
+                            <input type="text" id="social-handle-0" name="social_handle[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-social-button mt-4 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-200 text-sm sm:text-base text-gray-700 font-semibold rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" id="addSocialButton">Add another social handle</button>
+            </div>
+
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Physical Challenges</h3>
+                <div class="input-group flex flex-col">
+                    <label for="physical-challenges" class="text-sm font-medium text-gray-700 mb-1">15. Do you have a physical disability?</label>
+                    <select id="physical-challenges" name="physical_challenges" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                        <option value="">Select...</option>
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                <div id="disability-description-group" class="input-group flex-col hidden mt-4">
+                    <label for="disability-description" class="text-sm font-medium text-gray-700 mb-1">Please specify your physical disability</label>
+                    <input type="text" id="disability-description" name="disability_description" class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                </div>
+            </div>
+
+           <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">ID Verification</h3>
+                <p class="text-sm text-gray-500 mb-4">Please upload your government ID (front and back) and a selfie separately.</p>
+                <div class="form-section-grid two-columns">
+                    <div class="input-group flex flex-col">
+                        <label for="id-front" class="text-sm font-medium text-gray-700 mb-1">16. Government ID (Front)</label>
+                        <input type="file" id="id-front" name="government_id_front" accept="image/*, .pdf" required class="block w-full text-xs sm:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="id-back" class="text-sm font-medium text-gray-700 mb-1">17. Government ID (Back)</label>
+                        <input type="file" id="id-back" name="government_id_back" accept="image/*, .pdf" required class="block w-full text-xs sm:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="selfie" class="text-sm font-medium text-gray-700 mb-1">18. Selfie</label>
+                        <input type="file" id="selfie" name="selfie_photo" accept="image/*, .pdf" required class="block w-full text-xs sm:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section terms-and-conditions flex items-center mt-6">
+                <label class="checkbox-label flex items-center space-x-2">
+                    <input type="checkbox" name="terms" required class="rounded text-blue-600 focus:ring-blue-500">
+                    <span class="text-gray-700 text-sm">Agree to terms and condition</span>
+                </label>
+            </div>
+
+            <button type="submit" class="w-full px-5 py-2.5 mt-6 text-base sm:text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">Submit Application</button>
+        </form>
+    </main>
+
+    <div id="loadingModal" class="loading-modal">
+        <div class="modal-content">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Processing...</h2>
+            <p class="text-gray-600 text-xs sm:text-sm mb-6">Processing your application...</p>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Application Submitted!</h2>
+            <p class="text-gray-600 text-xs sm:text-sm mb-6">Your application has been submitted successfully. Your application form is under review. Kindly get back to your designated agent for more updates on your application</p>
+            <button id="closeModalButton" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 text-sm">Close</button>
+        </div>
+    </div>
+    
+    <div id="errorModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content">
+            <h2 class="text-xl sm:text-2xl font-bold text-red-600 mb-2">Submission Failed</h2>
+            <p class="text-gray-600 text-xs sm:text-sm mb-6">There was an error submitting your application. Please check your internet connection and try again.</p>
+            <button id="closeErrorModalButton" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300 text-sm">Close</button>
+        </div>
+    </div> 
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registrationForm');
+            const addSocialButton = document.getElementById('addSocialButton');
+            const socialHandlesContainer = document.getElementById('social-handles-container');
+            const loadingModal = document.getElementById('loadingModal');
+            const loadingModalContent = loadingModal.querySelector('.modal-content');
+            const successModal = document.getElementById('successModal');
+            const successModalContent = successModal.querySelector('.modal-content');
+            const closeModalButton = document.getElementById('closeModalButton');
+            const errorModal = document.getElementById('errorModal');
+            const errorModalContent = errorModal.querySelector('.modal-content');
+            const closeErrorModalButton = document.getElementById('closeErrorModalButton');
+            const physicalChallengesSelect = document.getElementById('physical-challenges');
+            const disabilityDescriptionGroup = document.getElementById('disability-description-group');
+            const disabilityDescriptionInput = document.getElementById('disability-description');
+
+
+            // Counter for social handles
+            let socialHandleCount = 1;
+
+            // Add new social handle fields
+            addSocialButton.addEventListener('click', () => {
+                const newSocialGroup = document.createElement('div');
+                newSocialGroup.classList.add('input-group', 'social-handle-group', 'grid', 'grid-cols-1', 'md:grid-cols-2', 'gap-4', 'mt-4');
+                newSocialGroup.innerHTML = `
+                    <div>
+                        <label for="social-platform-${socialHandleCount}" class="text-sm font-medium text-gray-700 mb-1">Social Platform</label>
+                        <select id="social-platform-${socialHandleCount}" name="social_platform[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">Select...</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="snapchat">Snapchat</option>
+                            <option value="twitter">Twitter</option>
+                            <option value="tiktok">TikTok</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="social-handle-${socialHandleCount}" class="text-sm font-medium text-gray-700 mb-1">Handle</label>
+                        <input type="text" id="social-handle-${socialHandleCount}" name="social_handle[]" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                `;
+                socialHandlesContainer.appendChild(newSocialGroup);
+                socialHandleCount++;
+            });
+
+            // Toggle disability description field based on selection
+            physicalChallengesSelect.addEventListener('change', () => {
+                if (physicalChallengesSelect.value === 'yes') {
+                    disabilityDescriptionGroup.classList.remove('hidden');
+                    // Add required attribute dynamically
+                    disabilityDescriptionInput.setAttribute('required', 'required'); 
+                } else {
+                    disabilityDescriptionGroup.classList.add('hidden');
+                    // Remove required attribute dynamically
+                    disabilityDescriptionInput.removeAttribute('required'); 
+                    disabilityDescriptionInput.value = ''; // Clear the input when hidden
+                }
+            });
+
+
+            // Helper function to show and hide modals
+            const showModal = (modal, content) => {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    content.classList.add('show');
+                }, 50);
+            };
+
+            const hideModal = (modal, content, reset = false) => {
+                content.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    if (reset) form.reset();
+                }, 300);
+            };
+
+            // Handle form submission using fetch
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                showModal(loadingModal, loadingModalContent);
+
+                // --- IMPORTANT CHANGE: Create FormData object here ---
+                const formData = new FormData(form);
+
+                try {
+                    // NOTE: The backend endpoint '/submit-form' needs to be configured 
+                    // to accept and process this multipart/form-data request, including file uploads.
+                    const response = await fetch('/submit-form', {
+                        method: 'POST',
+                        body: formData // Correctly sends files and form data
+                    });
+
+                    hideModal(loadingModal, loadingModalContent);
+
+                    if (response.ok) {
+                        showModal(successModal, successModalContent);
+                    } else {
+                        // Attempt to log error response text if available
+                        const errorText = await response.text().catch(() => 'No response text available');
+                        console.error('Submission failed:', response.status, errorText);
+                        showModal(errorModal, errorModalContent);
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    hideModal(loadingModal, loadingModalContent);
+                    showModal(errorModal, errorModalContent);
+                }
+            });
+
+            // Close success modal
+            closeModalButton.addEventListener('click', () => {
+                hideModal(successModal, successModalContent, true);
+            });
+            
+            // Close error modal
+            closeErrorModalButton.addEventListener('click', () => {
+                hideModal(errorModal, errorModalContent, false);
+            });
+        });
+    </script>
+<script src="i18n.js" type="application/javascript"></script>
+</body>
+</html>
