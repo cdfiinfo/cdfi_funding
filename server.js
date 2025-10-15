@@ -458,26 +458,41 @@ app.post('/submit-form', generalUpload.fields([
     }
 });
 
-// 7. PROTECTED API ROUTES (CRUD IMPLEMENTATION)
 
 // 🖼️ 7.0. POST /api/upload - Handle Image Upload (Admin route for winner images)
-app.post('/api/upload', protect, upload.single('winnerImage'), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No file uploaded.' });
-        }
-        
-        // The S3 public URL is available in req.file.location
-        const imageUrl = req.file.location;
+app.post('/api/upload', protect, (req, res) => {
+    // 1. Wrap the Multer middleware call in a handler
+    upload.single('winnerImage')(req, res, (err) => {
+        // 2. Check for Multer-specific errors
+        if (err instanceof multer.MulterError) {
+            console.error('Multer Error on /api/upload:', err.code, err.message);
+            return res.status(400).json({ message: `Upload failed: ${err.message}` });
+        }
+        // 3. Check for other non-Multer, synchronous errors (like your fileFilter error)
+        if (err) {
+            console.error('General Upload Error:', err);
+            return res.status(500).json({ message: `Image processing error: ${err.message}` });
+        }
+        
+        // 4. Proceed with successful upload logic
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No file uploaded or file was rejected by filter.' });
+            }
+            
+            // The S3 public URL is available in req.file.location
+            const imageUrl = req.file.location;
 
-        res.json({
-            message: 'Image uploaded successfully to B2.',
-            imageUrl: imageUrl 
-        });
-    } catch (err) {
-        console.error('Error uploading file to B2:', err);
-        res.status(500).json({ message: 'Error uploading file to B2 Cloud Storage.', error: err.message });
-    }
+            res.json({
+                message: 'Image uploaded successfully to B2.',
+                imageUrl: imageUrl 
+            });
+        } catch (syncErr) {
+            // 5. Catch any synchronous errors that happened after Multer finished
+            console.error('Error in /api/upload handler logic:', syncErr);
+            res.status(500).json({ message: 'Internal server error after successful upload.', error: syncErr.message });
+        }
+    });
 });
 
 
