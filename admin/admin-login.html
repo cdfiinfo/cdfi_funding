@@ -55,13 +55,11 @@
                 <p class="text-gray-500 mt-2 text-md">Secure access to manage DHHS Fund data.</p>
             </div>
 
-            <div id="loading-check" class="text-center p-4 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
-                Checking authentication status...
-            </div>
-
             <div id="message-container" class="mb-4 hidden p-3 rounded-xl text-sm transition duration-300 border font-medium"></div>
 
-            <div id="auth-forms" class="hidden"> <form id="login-form">
+            <div id="auth-forms">
+
+                <form id="login-form">
                     <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Sign In</h2>
                     
                     <div class="mb-4">
@@ -160,13 +158,10 @@
 
     <script>
         // Configuration
-        const API_BASE_URL = '/api/auth'; // Using relative path is better for deployment
-        const DASHBOARD_URL = 'admin-dashboard.html';
-        
+        const API_BASE_URL = 'http://localhost:5000/api/auth'; 
+
         // DOM Elements
         const messageContainer = document.getElementById('message-container');
-        const authFormsContainer = document.getElementById('auth-forms');
-        const loadingCheck = document.getElementById('loading-check');
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
         const forgotForm = document.getElementById('forgot-password-form');
@@ -204,8 +199,8 @@
             const targetLinkId = formName + '-links';
 
             // Hide all forms and links
-            formIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-            linkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            formIds.forEach(id => document.getElementById(id).classList.add('hidden'));
+            linkIds.forEach(id => document.getElementById(id).classList.add('hidden'));
 
             // Show the requested form and its corresponding links
             const targetForm = document.getElementById(targetFormId);
@@ -220,25 +215,7 @@
             }
         }
 
-        // --- 1. INITIAL TOKEN CHECK (NEW) ---
-        (function checkAuthStatus() {
-            const token = localStorage.getItem('adminToken');
-            
-            // If token exists, assume valid and redirect for persistent login
-            if (token) {
-                loadingCheck.textContent = 'Token found. Redirecting to dashboard...';
-                setTimeout(() => {
-                    window.location.href = DASHBOARD_URL;
-                }, 500); // Quick redirect
-            } else {
-                // No token, show the login forms
-                loadingCheck.classList.add('hidden');
-                authFormsContainer.classList.remove('hidden');
-            }
-        })();
-
-
-        // --- 2. LOGIN FORM HANDLER ---
+        // --- 3.1. LOGIN FORM HANDLER ---
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -259,18 +236,18 @@
                     displayMessage('Login successful! Redirecting to dashboard...', 'success');
                     
                     // Redirect after short delay
-                    setTimeout(() => { window.location.href = DASHBOARD_URL; }, 1500); 
+                    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500); 
 
                 } else {
                     // Login failed
                     displayMessage(data.message || 'Login failed. Please check your credentials.');
                 }
             } catch (error) {
-                displayMessage('Network error. Ensure the server is running and accessible.');
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
             }
         });
 
-        // --- 3. REGISTER FORM HANDLER ---
+        // --- 3.2. REGISTER FORM HANDLER ---
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('register-email').value;
@@ -293,21 +270,21 @@
                 if (response.ok) {
                     // Successful registration
                     localStorage.setItem('adminToken', data.token);
-                    displayMessage(data.message || 'Account created! Logging in...', 'success');
+                    displayMessage('Account created! Logging in...', 'success');
                     
                     // Redirect after short delay
-                    setTimeout(() => { window.location.href = DASHBOARD_URL; }, 1500); 
+                    setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500); 
 
                 } else {
                     // Registration failed
-                    displayMessage(data.message || 'Registration failed. The email might already be in use or registration is locked.');
+                    displayMessage(data.message || 'Registration failed. The email might already be in use.');
                 }
             } catch (error) {
-                displayMessage('Network error. Ensure the server is running and accessible.');
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
             }
         });
 
-        // --- 4. FORGOT PASSWORD FORM HANDLER ---
+        // --- 3.3. FORGOT PASSWORD FORM HANDLER ---
         forgotForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('forgot-email').value;
@@ -330,7 +307,7 @@
                     displayMessage(data.message || 'Failed to process reset request.');
                 }
             } catch (error) {
-                displayMessage('Network error. Ensure the server is running and accessible.');
+                displayMessage('Network error. Ensure the server is running on port 5000 and is accessible.');
             }
         });
     </script>
