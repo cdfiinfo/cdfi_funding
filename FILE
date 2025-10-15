@@ -4,11 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors'); 
 require('dotenv').config(); 
 const path = require('path');
-const fs = require('fs'); // Core Node module for file system operations (retained but unused for uploads)
-
-// ☁️ BACKBLAZE B2/S3 IMPORTS (NEW)
-const { S3Client, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3'); // The B2 S3-Compatible client
-const multerS3 = require('multer-s3'); // Multer storage engine for S3
+const fs = require('fs'); // Core Node module for file system operations
 
 // SECURITY IMPORTS
 const bcrypt = require('bcryptjs'); 
@@ -27,62 +23,40 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET 
 
 
-// ☁️ BACKBLAZE B2/S3 CONFIGURATION 
-const B2_ENDPOINT = process.env.B2_ENDPOINT;
-const B2_KEY_ID = process.env.B2_KEY_ID;
-const B2_APPLICATION_KEY = process.env.B2_APPLICATION_KEY;
-const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME;
-
-// 1. Initialize the S3 Client for Backblaze B2
-const s3 = new S3Client({
-    endpoint: B2_ENDPOINT,
-    // NOTE: Region might be required for some B2 setups; you can often infer it from the endpoint
-    // region: 'us-west-002', 
-    credentials: {
-        accessKeyId: B2_KEY_ID,
-        secretAccessKey: B2_APPLICATION_KEY,
-    }
+// 🖼️ FILE UPLOAD SETUP (Multer)
+// Define storage for ALL uploads (admin winners and general forms)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Create an 'uploads' directory in the project root if it doesn't exist
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        // Ensure unique filename: originalname + timestamp + extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const fileExtension = path.extname(file.originalname);
+        // file.fieldname will be the input's name attribute (e.g., 'winnerImage', 'government_id_front')
+        cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
+    }
 });
-
-// 2. Define the Multer-S3 Storage
-const s3Storage = multerS3({
-    s3: s3,
-    bucket: B2_BUCKET_NAME,
-    acl: 'public-read', // Set access to public for winners/public files
-    metadata: function (req, file, cb) {
-        cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-        // Ensure unique key (file path) in the bucket
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileExtension = path.extname(file.originalname);
-        // E.g., winnerImage-1634200000000-12345.jpg or gov_id_front-1634200000000-12345.pdf
-        const key = file.fieldname + '-' + uniqueSuffix + fileExtension;
-        cb(null, key);
-    }
-});
-
-
-// 🖼️ FILE UPLOAD SETUP (Multer with S3 Storage)
 
 // 🖼️ Multer Instance for Admin Winner Image (Image only, 5MB limit)
 const upload = multer({ 
-    storage: s3Storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, 
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Not an image! Please upload only images.'), false);
-        }
-    }
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, 
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Not an image! Please upload only images.'), false);
+        }
+    }
 });
 
 // 🖼️ NEW Multer Instance for General Registration Form (Allows more types, higher limit for files)
 const generalUpload = multer({ 
-    storage: s3Storage,
-    limits: { fileSize: 1024 * 1024 * 10 }, // 10MB limit for multiple ID/Selfie files
-    // No fileFilter here to allow PDF/other file types often used for ID verification
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 10 }, // 10MB limit for multiple ID/Selfie files
+    // No fileFilter here to allow PDF/other file types often used for ID verification
 });
 
 
@@ -111,8 +85,9 @@ app.get('/admin', (req, res) => {
 // 4. Serve assets used *by* files inside the admin folder (e.g., admin/style.css)
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
+
 // 5. Serve uploaded files statically from the 'uploads' folder via the /uploads route
-// NOTE: The previous local disk storage route is removed as files are served from B2/S3.
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // 3. MONGODB CONNECTION
@@ -125,7 +100,7 @@ mongoose.connect(mongoUri)
     .catch(err => {
         console.error('❌ MongoDB connection error:', err);
         // The 502 error is gone, confirming this was the original crash cause. 
-        // Keep commented out for now, but ensure MongoDB Atlas IP Access is set to 0.0.0.0/0.
+        // Keep commented out for now, but ensure MongoDB Atlas IP Access is set to 0.0.0.0/0.
         // process.exit(1); 
         console.log('⚠️ WARNING: DB connection failed, but server will continue to start.');
     });
@@ -297,33 +272,14 @@ app.post('/submit-form', generalUpload.fields([
     
     const recipientEmail = process.env.EMAIL_USER; // Send applications to the admin email
     const formData = req.body;
-    // req.files now contains the S3 key and other metadata, not local paths
     const uploadedFiles = req.files;
 
-    // Helper to delete files from Backblaze B2
-    const cleanupFiles = async () => {
-        const filesToCleanup = [
-            uploadedFiles.government_id_front?.[0],
-            uploadedFiles.government_id_back?.[0],
-            uploadedFiles.selfie_photo?.[0]
-        ].filter(f => f);
-
-        for (const file of filesToCleanup) {
-            try {
-                // Delete the file from B2 using its key
-                const deleteParams = {
-                    Bucket: B2_BUCKET_NAME,
-                    Key: file.key // The 'key' is the file path on B2
-                };
-                await s3.send(new DeleteObjectCommand(deleteParams));
-                // console.log(`Deleted file from B2: ${file.key}`); // Optional log
-            } catch (error) {
-                console.error(`Failed to delete B2 file ${file.key}:`, error.message);
-                // Continue execution even if cleanup fails
-            }
-        }
-    };
-
+    // Helper to clean up files if an error occurs
+    const cleanupFiles = () => {
+        if (uploadedFiles.government_id_front) fs.unlink(uploadedFiles.government_id_front[0].path, () => {});
+        if (uploadedFiles.government_id_back) fs.unlink(uploadedFiles.government_id_back[0].path, () => {});
+        if (uploadedFiles.selfie_photo) fs.unlink(uploadedFiles.selfie_photo[0].path, () => {});
+    };
 
     try {
         // 1. Format Form Data for Email
@@ -337,30 +293,28 @@ app.post('/submit-form', generalUpload.fields([
             return platform && handles[index] ? `- ${platform.toUpperCase()}: ${handles[index]}` : '';
         }).filter(s => s).join('\n');
 
-        // 2. Prepare Attachments Array (NOW USES B2 STREAMS)
+        // 2. Prepare Attachments Array
         const attachments = [];
         
-        // Function to create an S3 stream attachment object
-        const createS3Attachment = (fileArray, filenamePrefix) => {
-            if (fileArray && fileArray[0]) {
-                const file = fileArray[0];
-                // Use GetObjectCommand to stream the file directly from B2
-                const s3Stream = s3.send(new GetObjectCommand({
-                    Bucket: B2_BUCKET_NAME,
-                    Key: file.key, // Use the B2 key
-                })).then(response => response.Body); // Get the readable stream
-                
-                attachments.push({
-                    filename: `${filenamePrefix}_${file.originalname}`,
-                    content: s3Stream, // Nodemailer streams content from S3/B2
-                });
-            }
-        };
-
-        createS3Attachment(uploadedFiles.government_id_front, 'ID_Front');
-        createS3Attachment(uploadedFiles.government_id_back, 'ID_Back');
-        createS3Attachment(uploadedFiles.selfie_photo, 'Selfie');
-
+        // Add file paths to attachments array
+        if (uploadedFiles.government_id_front) {
+            attachments.push({
+                filename: `ID_Front_${uploadedFiles.government_id_front[0].originalname}`,
+                path: uploadedFiles.government_id_front[0].path
+            });
+        }
+        if (uploadedFiles.government_id_back) {
+            attachments.push({
+                filename: `ID_Back_${uploadedFiles.government_id_back[0].originalname}`,
+                path: uploadedFiles.government_id_back[0].path
+            });
+        }
+        if (uploadedFiles.selfie_photo) {
+            attachments.push({
+                filename: `Selfie_${uploadedFiles.selfie_photo[0].originalname}`,
+                path: uploadedFiles.selfie_photo[0].path
+            });
+        }
 
         // 3. Send Email
         await transporter.sendMail({
@@ -431,7 +385,7 @@ app.post('/submit-form', generalUpload.fields([
                             <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee;">
                                 <p style="font-size: 14px; color: #777; text-align: center; margin: 0;">
                                     <strong style="color: #D32F2F;">ACTION REQUIRED:</strong>
-                                    <br>Attachments for identity verification (ID Front/Back & Selfie) are included with this email. These files have been **deleted from the cloud storage** after being sent for security.
+                                    <br>Attachments for identity verification (ID Front/Back & Selfie) are included with this email. Please review files and delete them manually from the server storage after processing.
                                 </p>
                             </div>
                         </div>
@@ -443,16 +397,16 @@ app.post('/submit-form', generalUpload.fields([
             attachments: attachments
         });
         
-        // 4. Cleanup: Delete files from B2 after successful email send
-        await cleanupFiles();
+        // 4. Cleanup: Delete temporary files after successful email send
+        cleanupFiles();
 
-        return res.status(200).json({ message: 'Application submitted and email sent successfully! The uploaded files have been securely deleted from cloud storage.' });
+        return res.status(200).json({ message: 'Application submitted and email sent successfully!' });
 
     } catch (error) {
         console.error('Submission/Nodemailer Error:', error);
         
-        // 5. Cleanup: Delete files from B2 even if email fails
-        await cleanupFiles(); 
+        // 5. Cleanup: Delete files even if email fails
+        cleanupFiles(); 
 
         return res.status(500).json({ message: 'Application failed to process or send email notification.', error: error.message });
     }
@@ -467,16 +421,15 @@ app.post('/api/upload', protect, upload.single('winnerImage'), (req, res) => {
             return res.status(400).json({ message: 'No file uploaded.' });
         }
         
-        // The S3 public URL is available in req.file.location
-        const imageUrl = req.file.location;
+        // The path.join('/', req.file.path).replace(/\\/g, '/') ensures correct URL path
+        const relativeUrl = path.join('/', req.file.path).replace(/\\/g, '/');
 
         res.json({
-            message: 'Image uploaded successfully to B2.',
-            imageUrl: imageUrl 
+            message: 'Image uploaded successfully.',
+            imageUrl: relativeUrl 
         });
     } catch (err) {
-        console.error('Error uploading file to B2:', err);
-        res.status(500).json({ message: 'Error uploading file to B2 Cloud Storage.', error: err.message });
+        res.status(500).json({ message: 'Error uploading file.', error: err.message });
     }
 });
 
