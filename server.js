@@ -17,7 +17,7 @@ const multer = require('multer');
 const nodemailer = require('nodemailer'); 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT
 const JWT_SECRET = process.env.JWT_SECRET 
 
 
