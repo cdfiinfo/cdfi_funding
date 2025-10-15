@@ -63,19 +63,24 @@ app.use(cors());
 app.use(express.json()); 
 
 // 🚨 CRITICAL FIX APPLIED HERE:
-// 1. Serve the project root folder statically.
-// This allows 'index.html' (in the root) to be automatically served for the path '/'
+// 1. Explicitly serve the root index.html first to prevent any confusion.
+app.get('/', (req, res) => {
+    // This explicitly serves the main public page located in the project root.
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 2. Serve all other static assets from the root directory (like registrationform.html, CSS, JS, etc.)
+// This ensures that links to /registrationform.html work, and local assets like /assets/style.css work.
 app.use(express.static(path.join(__dirname, '')));
 
-// 2. Serve the 'admin' folder assets via a prefixed path (e.g., /admin-assets)
+// 3. Serve the 'admin' folder assets via a prefixed path (e.g., /admin-assets)
 // IMPORTANT: This path is needed for CSS/JS/images used by HTML files inside the 'admin' directory.
 app.use('/admin-assets', express.static(path.join(__dirname, 'admin')));
 
-// 3. Serve uploaded files statically from the 'uploads' folder via the /uploads route
+// 4. Serve uploaded files statically from the 'uploads' folder via the /uploads route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 4. OPTIONAL: Explicit route for the admin page, useful if you want a dedicated /admin path
-// If you want the admin login page to be accessible at /admin
+// 5. Explicit route for the admin login page
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'admin-login.html'));
 });
