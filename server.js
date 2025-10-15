@@ -11,10 +11,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); 
 
 // 🖼️ FILE UPLOAD IMPORT
-const multer = require('multer'); // Must install: npm install multer
+const multer = require('multer'); 
 
 // 📧 EMAIL IMPORT
-const nodemailer = require('nodemailer'); // Must install: npm install nodemailer
+const nodemailer = require('nodemailer'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,14 +62,15 @@ const generalUpload = multer({
 app.use(cors()); 
 app.use(express.json()); 
 
-// CRITICAL FIX: Serve static files from the project root (where the 'admin' folder is)
-app.use(express.static(path.join(__dirname, '/')));
+// CRITICAL CORRECTION: Serve static files from the 'admin' folder statically accessible from root path (/)
+app.use(express.static(path.join(__dirname, 'admin')));
 
-// 🖼️ NEW FIX: Serve uploaded files statically from the 'uploads' folder
+// Serve uploaded files statically from the 'uploads' folder via the /uploads route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // A simple route to serve the client login page (which we assume is now 'admin-login.html')
 app.get('/', (req, res) => {
+    // This explicitly sends the login file regardless of the static middleware above
     res.sendFile(path.join(__dirname, 'admin', 'admin-login.html'));
 });
 
@@ -306,10 +307,8 @@ app.post('/submit-form', generalUpload.fields([
             // ENHANCED HTML TEMPLATE START
             html: `
                 <div style="background-color: #f4f7f6; padding: 20px; font-family: 'Inter', Arial, sans-serif; color: #333; line-height: 1.6;">
-                    <!-- Card Container -->
                     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 
-                        <!-- Header -->
                         <div style="background-color: #00796B; color: #ffffff; padding: 20px 30px;">
                             <h1 style="margin: 0; font-size: 24px;">New Grant Application</h1>
                             <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">
@@ -317,10 +316,8 @@ app.post('/submit-form', generalUpload.fields([
                             </p>
                         </div>
 
-                        <!-- Content Body -->
                         <div style="padding: 25px 30px;">
                             
-                            <!-- Contact Section -->
                             <h3 style="color: #00796B; border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">Contact & Location</h3>
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
                                 <tr>
@@ -337,11 +334,9 @@ app.post('/submit-form', generalUpload.fields([
                                 </tr>
                             </table>
 
-                            <!-- Needs Section -->
                             <h3 style="color: #00796B; border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 20px;">Requested Needs</h3>
                             <pre style="background: #e0f2f1; color: #004d40; padding: 15px; border: 1px solid #b2dfdb; border-radius: 8px; white-space: pre-wrap; word-break: break-word;">${needsList}</pre>
 
-                            <!-- Personal Details Section -->
                             <h3 style="color: #00796B; border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 20px;">Personal & Financial Details</h3>
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
                                 <tr>
@@ -365,13 +360,11 @@ app.post('/submit-form', generalUpload.fields([
                                 </tr>
                             </table>
 
-                            <!-- Social Handles Section (Conditional) -->
                             ${socialHandles.length > 0 ? `
                             <h3 style="color: #00796B; border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 20px;">Social Handles</h3>
                             <pre style="background: #e0f2f1; color: #004d40; padding: 15px; border: 1px solid #b2dfdb; border-radius: 8px; white-space: pre-wrap; word-break: break-word;">${socialHandles}</pre>
                             ` : ''}
                             
-                            <!-- Footer/Attachments Note -->
                             <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee;">
                                 <p style="font-size: 14px; color: #777; text-align: center; margin: 0;">
                                     <strong style="color: #D32F2F;">ACTION REQUIRED:</strong>
@@ -510,5 +503,5 @@ app.delete('/api/winners/:id', protect, async (req, res) => {
 // 8. START SERVER
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}. Access http://localhost:${PORT}`);
-    console.log(`💡 Remember to install dependencies: npm install express mongoose cors dotenv bcryptjs jsonwebtoken multer **nodemailer**`);
+    console.log(`💡 Dependencies check complete.`);
 });
