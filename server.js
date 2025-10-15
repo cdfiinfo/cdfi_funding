@@ -85,20 +85,18 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'admin-login.html'));
 });
 
-
 // 3. MONGODB CONNECTION
 const mongoUri = process.env.MONGODB_URI
 
 mongoose.connect(mongoUri)
-    .then(() => {
-        console.log('✅ MongoDB connected successfully.');
-    })
-    .catch(err => {
-        console.error('❌ MongoDB connection error:', err);
-        process.exit(1); 
-    });
-
-
+    .then(() => {
+        console.log('✅ MongoDB connected successfully.');
+    })
+    .catch(err => {
+        console.error('❌ MongoDB connection error:', err);
+        // process.exit(1); // <-- CRITICAL: COMMENT THIS LINE OUT
+        console.log('⚠️ WARNING: DB connection failed, but server will continue to start.');
+    });
 // 4. MONGODB SCHEMAS AND MODELS
 
 // --- Admin User Schema and Model (NEW) ---
