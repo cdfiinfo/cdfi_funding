@@ -63,18 +63,23 @@ app.use(cors());
 app.use(express.json()); 
 
 // 🚨 CRITICAL FIX APPLIED HERE:
-// Change the static file middleware path to avoid conflict with the root route ('/')
-// Static assets (CSS/JS/Images inside 'admin') are now accessible via /admin-assets/
+// 1. Serve the project root folder statically.
+// This allows 'index.html' (in the root) to be automatically served for the path '/'
+app.use(express.static(path.join(__dirname, '')));
+
+// 2. Serve the 'admin' folder assets via a prefixed path (e.g., /admin-assets)
+// IMPORTANT: This path is needed for CSS/JS/images used by HTML files inside the 'admin' directory.
 app.use('/admin-assets', express.static(path.join(__dirname, 'admin')));
 
-// Serve uploaded files statically from the 'uploads' folder via the /uploads route
+// 3. Serve uploaded files statically from the 'uploads' folder via the /uploads route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// The explicit root route now reliably serves admin-login.html
-app.get('/', (req, res) => {
-    // This explicitly sends the login file, preventing the 404 issue.
+// 4. OPTIONAL: Explicit route for the admin page, useful if you want a dedicated /admin path
+// If you want the admin login page to be accessible at /admin
+app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'admin-login.html'));
 });
+
 
 // 3. MONGODB CONNECTION
 const mongoUri = process.env.MONGODB_URI
