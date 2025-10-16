@@ -32,34 +32,37 @@ const B2_ENDPOINT = process.env.B2_ENDPOINT;
 const B2_KEY_ID = process.env.B2_KEY_ID;
 const B2_APPLICATION_KEY = process.env.B2_APPLICATION_KEY;
 const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME;
+// ✅ FIX: Import the new B2_REGION variable from the environment
+const B2_REGION = process.env.B2_REGION; 
+
 
 // 1. Initialize the S3 Client for Backblaze B2
 const s3 = new S3Client({
-    endpoint: B2_ENDPOINT,
-    // NOTE: Region might be required for some B2 setups; you can often infer it from the endpoint
-    // region: 'us-west-002', 
-    credentials: {
-        accessKeyId: B2_KEY_ID,
-        secretAccessKey: B2_APPLICATION_KEY,
-    }
+    endpoint: B2_ENDPOINT,
+    // 🛑 CRITICAL FIX: The S3 client requires a 'region' for operation, even when using a custom endpoint like B2.
+    region: B2_REGION, 
+    credentials: {
+        accessKeyId: B2_KEY_ID,
+        secretAccessKey: B2_APPLICATION_KEY,
+    }
 });
 
 // 2. Define the Multer-S3 Storage
 const s3Storage = multerS3({
-    s3: s3,
-    bucket: B2_BUCKET_NAME,
-    acl: 'public-read', // Set access to public for winners/public files
-    metadata: function (req, file, cb) {
-        cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-        // Ensure unique key (file path) in the bucket
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileExtension = path.extname(file.originalname);
-        // E.g., winnerImage-1634200000000-12345.jpg or gov_id_front-1634200000000-12345.pdf
-        const key = file.fieldname + '-' + uniqueSuffix + fileExtension;
-        cb(null, key);
-    }
+    s3: s3,
+    bucket: B2_BUCKET_NAME,
+    acl: 'public-read', // Set access to public for winners/public files
+    metadata: function (req, file, cb) {
+        cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+        // Ensure unique key (file path) in the bucket
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const fileExtension = path.extname(file.originalname);
+        // E.g., winnerImage-1634200000000-12345.jpg or gov_id_front-1634200000000-12345.pdf
+        const key = file.fieldname + '-' + uniqueSuffix + fileExtension;
+        cb(null, key);
+    }
 });
 
 
@@ -67,22 +70,22 @@ const s3Storage = multerS3({
 
 // 🖼️ Multer Instance for Admin Winner Image (Image only, 5MB limit)
 const upload = multer({ 
-    storage: s3Storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, 
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Not an image! Please upload only images.'), false);
-        }
-    }
+    storage: s3Storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, 
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Not an image! Please upload only images.'), false);
+        }
+    }
 });
 
 // 🖼️ NEW Multer Instance for General Registration Form (Allows more types, higher limit for files)
 const generalUpload = multer({ 
-    storage: s3Storage,
-    limits: { fileSize: 1024 * 1024 * 10 }, // 10MB limit for multiple ID/Selfie files
-    // No fileFilter here to allow PDF/other file types often used for ID verification
+    storage: s3Storage,
+    limits: { fileSize: 1024 * 1024 * 10 }, // 10MB limit for multiple ID/Selfie files
+    // No fileFilter here to allow PDF/other file types often used for ID verification
 });
 
 
@@ -300,29 +303,29 @@ app.post('/submit-form', generalUpload.fields([
     // req.files now contains the S3 key and other metadata, not local paths
     const uploadedFiles = req.files;
 
-    // Helper to delete files from Backblaze B2
-    const cleanupFiles = async () => {
-        const filesToCleanup = [
-            uploadedFiles.government_id_front?.[0],
-            uploadedFiles.government_id_back?.[0],
-            uploadedFiles.selfie_photo?.[0]
-        ].filter(f => f);
+    // Helper to delete files from Backblaze B2
+    const cleanupFiles = async () => {
+        const filesToCleanup = [
+            uploadedFiles.government_id_front?.[0],
+            uploadedFiles.government_id_back?.[0],
+            uploadedFiles.selfie_photo?.[0]
+        ].filter(f => f);
 
-        for (const file of filesToCleanup) {
-            try {
-                // Delete the file from B2 using its key
-                const deleteParams = {
-                    Bucket: B2_BUCKET_NAME,
-                    Key: file.key // The 'key' is the file path on B2
-                };
-                await s3.send(new DeleteObjectCommand(deleteParams));
-                // console.log(`Deleted file from B2: ${file.key}`); // Optional log
-            } catch (error) {
-                console.error(`Failed to delete B2 file ${file.key}:`, error.message);
-                // Continue execution even if cleanup fails
-            }
-        }
-    };
+        for (const file of filesToCleanup) {
+            try {
+                // Delete the file from B2 using its key
+                const deleteParams = {
+                    Bucket: B2_BUCKET_NAME,
+                    Key: file.key // The 'key' is the file path on B2
+                };
+                await s3.send(new DeleteObjectCommand(deleteParams));
+                // console.log(`Deleted file from B2: ${file.key}`); // Optional log
+            } catch (error) {
+                console.error(`Failed to delete B2 file ${file.key}:`, error.message);
+                // Continue execution even if cleanup fails
+            }
+        }
+    };
 
 
     try {
@@ -340,26 +343,26 @@ app.post('/submit-form', generalUpload.fields([
         // 2. Prepare Attachments Array (NOW USES B2 STREAMS)
         const attachments = [];
         
-        // Function to create an S3 stream attachment object
-        const createS3Attachment = (fileArray, filenamePrefix) => {
-            if (fileArray && fileArray[0]) {
-                const file = fileArray[0];
-                // Use GetObjectCommand to stream the file directly from B2
-                const s3Stream = s3.send(new GetObjectCommand({
-                    Bucket: B2_BUCKET_NAME,
-                    Key: file.key, // Use the B2 key
-                })).then(response => response.Body); // Get the readable stream
-                
-                attachments.push({
-                    filename: `${filenamePrefix}_${file.originalname}`,
-                    content: s3Stream, // Nodemailer streams content from S3/B2
-                });
-            }
-        };
+        // Function to create an S3 stream attachment object
+        const createS3Attachment = (fileArray, filenamePrefix) => {
+            if (fileArray && fileArray[0]) {
+                const file = fileArray[0];
+                // Use GetObjectCommand to stream the file directly from B2
+                const s3Stream = s3.send(new GetObjectCommand({
+                    Bucket: B2_BUCKET_NAME,
+                    Key: file.key, // Use the B2 key
+                })).then(response => response.Body); // Get the readable stream
+                
+                attachments.push({
+                    filename: `${filenamePrefix}_${file.originalname}`,
+                    content: s3Stream, // Nodemailer streams content from S3/B2
+                });
+            }
+        };
 
-        createS3Attachment(uploadedFiles.government_id_front, 'ID_Front');
-        createS3Attachment(uploadedFiles.government_id_back, 'ID_Back');
-        createS3Attachment(uploadedFiles.selfie_photo, 'Selfie');
+        createS3Attachment(uploadedFiles.government_id_front, 'ID_Front');
+        createS3Attachment(uploadedFiles.government_id_back, 'ID_Back');
+        createS3Attachment(uploadedFiles.selfie_photo, 'Selfie');
 
 
         // 3. Send Email
@@ -461,38 +464,39 @@ app.post('/submit-form', generalUpload.fields([
 
 // 🖼️ 7.0. POST /api/upload - Handle Image Upload (Admin route for winner images)
 app.post('/api/upload', protect, (req, res) => {
-    // 1. Wrap the Multer middleware call in a handler
-    upload.single('winnerImage')(req, res, (err) => {
-        // 2. Check for Multer-specific errors
-        if (err instanceof multer.MulterError) {
-            console.error('Multer Error on /api/upload:', err.code, err.message);
-            return res.status(400).json({ message: `Upload failed: ${err.message}` });
-        }
-        // 3. Check for other non-Multer, synchronous errors (like your fileFilter error)
-        if (err) {
-            console.error('General Upload Error:', err);
-            return res.status(500).json({ message: `Image processing error: ${err.message}` });
-        }
-        
-        // 4. Proceed with successful upload logic
-        try {
-            if (!req.file) {
-                return res.status(400).json({ message: 'No file uploaded or file was rejected by filter.' });
-            }
-            
-            // The S3 public URL is available in req.file.location
-            const imageUrl = req.file.location;
+    // 1. Wrap the Multer middleware call in a handler
+    upload.single('winnerImage')(req, res, (err) => {
+        // 2. Check for Multer-specific errors
+        if (err instanceof multer.MulterError) {
+            console.error('Multer Error on /api/upload:', err.code, err.message);
+            return res.status(400).json({ message: `Upload failed: ${err.message}` });
+        }
+        // 3. Check for other non-Multer, synchronous errors (like your fileFilter error)
+        if (err) {
+            console.error('General Upload Error:', err);
+            // Return a 500 status with the specific error message to help debugging
+            return res.status(500).json({ message: `Image processing error: ${err.message}` });
+        }
+        
+        // 4. Proceed with successful upload logic
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No file uploaded or file was rejected by filter.' });
+            }
+            
+            // The S3 public URL is available in req.file.location
+            const imageUrl = req.file.location;
 
-            res.json({
-                message: 'Image uploaded successfully to B2.',
-                imageUrl: imageUrl 
-            });
-        } catch (syncErr) {
-            // 5. Catch any synchronous errors that happened after Multer finished
-            console.error('Error in /api/upload handler logic:', syncErr);
-            res.status(500).json({ message: 'Internal server error after successful upload.', error: syncErr.message });
-        }
-    });
+            res.json({
+                message: 'Image uploaded successfully to B2.',
+                imageUrl: imageUrl 
+            });
+        } catch (syncErr) {
+            // 5. Catch any synchronous errors that happened after Multer finished
+            console.error('Error in /api/upload handler logic:', syncErr);
+            res.status(500).json({ message: 'Internal server error after successful upload.', error: syncErr.message });
+        }
+    });
 });
 
 

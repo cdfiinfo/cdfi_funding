@@ -4,8 +4,10 @@ node_modules/
 # Environment files
 .env
 
-# Uploaded files
-uploads/
+
+
+
+
 
 
 
