@@ -69,6 +69,18 @@
                 font-size: 0.875rem; /* text-sm */
             }
         }
+        .remove-social-btn {
+            background-color: #ef4444; /* Red-500 */
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1;
+            transition: background-color 0.3s;
+        }
+        .remove-social-btn:hover {
+            background-color: #dc2626; /* Red-600 */
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -259,10 +271,52 @@
                     </div>
                 </div>
             </div>
+
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Social Handles (Optional)</h3>
+                <div id="socialHandlesContainer" class="space-y-4">
+                    <div class="social-handle-group flex items-end space-x-2">
+                        <div class="input-group flex flex-col flex-1">
+                            <label class="text-sm font-medium text-gray-700 mb-1">Platform</label>
+                            <select name="social_platform[]" class="p-2 border border-gray-300 rounded-md text-sm">
+                                <option value="">Select Platform...</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="twitter">Twitter/X</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group flex flex-col flex-2">
+                            <label class="text-sm font-medium text-gray-700 mb-1">Username/Handle</label>
+                            <input type="text" name="social_handle[]" placeholder="@username or URL" class="p-2 border border-gray-300 rounded-md text-sm">
+                        </div>
+                        </div>
+                </div>
+                <button type="button" id="addSocialButton" class="mt-4 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 text-sm">Add Another Social Handle</button>
+            </div>
+            <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">15. Identity Verification (Required)</h3>
+                <p class="text-sm text-red-500 mb-4 font-medium">For security, these files will be securely deleted from the cloud server after being emailed to the admin.</p>
+                <div class="form-section-grid two-columns">
+                    <div class="input-group flex flex-col">
+                        <label for="id-front" class="text-sm font-medium text-gray-700 mb-1">Government ID (Front)</label>
+                        <input type="file" id="id-front" name="government_id_front" accept=".jpg,.jpeg,.png,.pdf" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="id-back" class="text-sm font-medium text-gray-700 mb-1">Government ID (Back)</label>
+                        <input type="file" id="id-back" name="government_id_back" accept=".jpg,.jpeg,.png,.pdf" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                    <div class="input-group flex flex-col col-span-full">
+                        <label for="selfie" class="text-sm font-medium text-gray-700 mb-1">Selfie Photo Holding ID</label>
+                        <input type="file" id="selfie" name="selfie_photo" accept="image/*" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    </div>
+                </div>
+            </div>
             <div class="form-section p-4 sm:p-6 border border-gray-200 rounded-lg">
                 <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-gray-700">Physical Challenges</h3>
                 <div class="input-group flex flex-col">
-                    <label for="physical-challenges" class="text-sm font-medium text-gray-700 mb-1">14. Do you have a physical disability?</label>
+                    <label for="physical-challenges" class="text-sm font-medium text-gray-700 mb-1">16. Do you have a physical disability?</label>
                     <select id="physical-challenges" name="physical_challenges" required class="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
                         <option value="">Select...</option>
                         <option value="no">No</option>
@@ -323,9 +377,48 @@
             const physicalChallengesSelect = document.getElementById('physical-challenges');
             const disabilityDescriptionGroup = document.getElementById('disability-description-group');
             const disabilityDescriptionInput = document.getElementById('disability-description');
+            
+            // NEW SOCIAL HANDLES VARIABLES
+            const socialHandlesContainer = document.getElementById('socialHandlesContainer');
+            const addSocialButton = document.getElementById('addSocialButton');
 
 
-            // REMOVED: All code related to 'addSocialButton' and 'socialHandlesContainer'
+            // --- Function to add a new social handle field group ---
+            const addSocialHandleField = (canRemove = true) => {
+                const newGroup = document.createElement('div');
+                newGroup.className = 'social-handle-group flex items-end space-x-2';
+                newGroup.innerHTML = `
+                    <div class="input-group flex flex-col flex-1">
+                        <label class="text-sm font-medium text-gray-700 mb-1">Platform</label>
+                        <select name="social_platform[]" class="p-2 border border-gray-300 rounded-md text-sm">
+                            <option value="">Select Platform...</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="twitter">Twitter/X</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group flex flex-col flex-2">
+                        <label class="text-sm font-medium text-gray-700 mb-1">Username/Handle</label>
+                        <input type="text" name="social_handle[]" placeholder="@username or URL" class="p-2 border border-gray-300 rounded-md text-sm">
+                    </div>
+                    ${canRemove ? '<button type="button" class="remove-social-btn h-10 w-10 flex items-center justify-center">X</button>' : ''}
+                `;
+                
+                socialHandlesContainer.appendChild(newGroup);
+                
+                if (canRemove) {
+                    newGroup.querySelector('.remove-social-btn').addEventListener('click', () => {
+                        socialHandlesContainer.removeChild(newGroup);
+                    });
+                }
+            };
+            
+            // Event listener for adding social handles
+            addSocialButton.addEventListener('click', () => addSocialHandleField(true));
+            
+            // --- End Social Handle Functions ---
 
             // Toggle disability description field based on selection
             physicalChallengesSelect.addEventListener('change', () => {
@@ -367,8 +460,8 @@
                 const formData = new FormData(form);
 
                 try {
-                    // NOTE: The backend endpoint '/submit-form' needs to be configured 
-                    // to accept and process this multipart/form-data request, including file uploads.
+                    // NOTE: The backend endpoint '/submit-form' is configured to accept 
+                    // this multipart/form-data request, including file uploads.
                     const response = await fetch('/submit-form', {
                         method: 'POST',
                         body: formData // Correctly sends files and form data
