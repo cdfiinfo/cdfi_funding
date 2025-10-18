@@ -51,7 +51,7 @@ const s3 = new S3Client({
 const s3Storage = multerS3({
     s3: s3,
     bucket: B2_BUCKET_NAME,
-    acl: 'public-read', // Set access to public for winners/public files
+  //  acl: 'public-read', // Set access to public for winners/public files
     metadata: function (req, file, cb) {
         cb(null, { fieldName: file.fieldname });
     },
