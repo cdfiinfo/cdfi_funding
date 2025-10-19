@@ -6,59 +6,80 @@
     <title>CDFI Application</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom Font Import */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
+    /* Custom Font Import */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+        color: #333;
+    }
+    /* Custom Utility Classes for Backgrounds */
+    .hero-bg {
+        background-image: url('https://i.imgur.com/WoHu6p8.jpeg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    .program-bg {
+        background-color: #3798ff; /* DHHS primary blue */
+    }
+    .tools-bg {
+        background-color: #2994ff; /* DHHS darker blue */
+    }
+    /* Custom class for fixed headers and scroll behavior */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+    }
+    .header.hidden {
+        transform: translateY(-100%);
+    }
+    .scam-alert {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1001;
+    }
+    /* Custom loader spin animation */
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #ffcd00;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        margin: 20px auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* --- Custom Media Query Styles for Modal Responsiveness --- */
+    /* Base styles for the modal content */
+    #winner-modal > div {
+        max-width: 90%; /* Default max-width for small screens */
+    }
+    /* Small screen adjustments for key elements */
+    @media (max-width: 640px) { /* Tailind CSS 'sm' breakpoint */
+        #modal-winner-name {
+            font-size: 1.75rem; /* text-2xl on mobile */
         }
-        /* Custom Utility Classes for Backgrounds */
-        .hero-bg {
-            background-image: url('https://i.imgur.com/WoHu6p8.jpeg');
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
+        #modal-winner-location {
+            font-size: 0.875rem; /* text-sm on mobile */
         }
-        .program-bg {
-            background-color: #395777; /* DHHS primary blue */
+        #winner-modal .modal-data-label {
+            font-size: 0.875rem; /* text-sm for labels */
         }
-        .tools-bg {
-            background-color: #2b4661; /* DHHS darker blue */
+        #winner-modal .modal-data-value {
+            font-size: 1rem; /* text-base for values */
         }
-        /* Custom class for fixed headers and scroll behavior */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000;
-        }
-        .header.hidden {
-            transform: translateY(-100%);
-        }
-        .scam-alert {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1001;
-        }
-        /* Custom loader spin animation */
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ffcd00;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    }
+</style>
 </head>
 <body class="bg-white">
     <header id="main-header" class="header bg-[#395777] shadow-md">
@@ -92,7 +113,7 @@
                         The COMMUNITY DEVELOPMENT FINANCIAL INSTITUTIONS (CDFI Fund) plays an important role in generating economic growth and opportunity in some of our nation’s most distressed communities. By offering tailored financial assistance and innovative programs that invest federal dollars alongside private sector capital, the CDFI Fund serves mission-driven financial institutions that take a market-based approach to supporting economically disadvantaged communities. These mission-driven organizations are encouraged to apply for CDFI Certification and participate in CDFI Fund programs that inject new sources of capital into neighborhoods that lack access to financing.
                     </p>
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base mb-2 md:mb-4">
-                       CDFI Fund is set to help people - old, retired, workers, student, disability, non-retired to eradicate poverty and support their life's.
+                        CDFI Fund is set to help people - old, retired, workers, student, disability, non-retired to eradicate poverty and support their life's.
                     </p>
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base mb-2 md:mb-4">
                         Each business financed, each job created, and each home built represents a critical step in the transformation of a life, a family, and a community. This is real change. This is the CDFI Fund. This is not a loan and you will never ask to pay back.
@@ -146,8 +167,8 @@
             <div class="max-w-xl mx-auto bg-white text-[#2b4661] p-6 md:p-8 rounded-xl shadow-2xl">
 
                 <img class="w-28 h-28 md:w-36 md:h-36 rounded-full mx-auto mb-4 object-cover border-4 border-[#395777]"
-                            src="https://i.imgur.com/ePf8I18.jpeg"
-                            alt="Agent Profile Picture">
+                                    src="https://i.imgur.com/ePf8I18.jpeg"
+                                    alt="Agent Profile Picture">
 
                 <h3 class="text-xl md:text-2xl font-bold mb-2">Lawrence Wayne Young</h3>
                 <p class="text-sm text-gray-600 mb-4">Certified Fund Specialist | CDDFI Program Expert</p>
@@ -327,53 +348,54 @@
     </footer>
 
     <div id="winner-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-[2000] hidden flex justify-center items-center p-4" onclick="closeModal(event)">
-        <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full transform transition-all overflow-hidden" onclick="event.stopPropagation()">
-            <div class="program-bg text-white p-4 flex justify-between items-center">
-                <h3 class="text-xl font-bold">Winner Recipient Details</h3>
+        <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full transform transition-all overflow-hidden max-w-xs sm:max-w-md lg:max-w-lg" onclick="event.stopPropagation()">
+            <div class="program-bg text-white p-3 sm:p-4 flex justify-between items-center">
+                <h3 class="text-lg sm:text-xl font-bold">Winner Recipient Details</h3>
                 <button onclick="hideModal()" class="text-white hover:text-[#ffcd00] transition-colors duration-200" aria-label="Close Modal">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <div class="p-6 text-gray-800 flex flex-col items-center">
-                <img id="modal-winner-image" src="https://i.imgur.com/v8tT9oP.jpeg" alt="Winner Profile" class="w-32 h-32 rounded-full object-cover border-4 border-[#ffcd00] mb-4">
+            <div class="p-4 sm:p-6 text-gray-800 flex flex-col items-center">
+                <img id="modal-winner-image" src="https://i.imgur.com/v8tT9oP.jpeg" alt="Winner Profile" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-[#ffcd00] mb-3 sm:mb-4">
                 
-                <h4 id="modal-winner-name" class="text-3xl font-extrabold text-[#2b4661] mb-1"></h4>
-                <p id="modal-winner-location" class="text-lg text-gray-600 mb-4"></p>
+                <h4 id="modal-winner-name" class="text-2xl sm:text-3xl font-extrabold text-[#2b4661] mb-1"></h4>
+                <p id="modal-winner-location" class="text-sm sm:text-lg text-gray-600 mb-3 sm:mb-4"></p>
                 
-                                <div class="text-center bg-green-100 border-l-4 border-green-500 text-green-800 p-4 mb-6 w-full max-w-md rounded-md" role="alert">
-                    <p class="font-bold text-lg">Congratulations!</p>
-                    <p class="text-sm">You have been successfully selected as a winner recipient.</p>
+                <div class="text-center bg-green-100 border-l-4 border-green-500 text-green-800 p-3 sm:p-4 mb-4 sm:mb-6 w-full max-w-md rounded-md" role="alert">
+                    <p class="font-bold text-base sm:text-lg">Congratulations!</p>
+                    <p class="text-xs sm:text-sm">You have been successfully selected as a winner recipient.</p>
                 </div>
-                                <div class="w-full space-y-3">
-                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
-                        <span class="font-semibold text-gray-600">Winning Code:</span>
-                        <span id="modal-winner-code" class="font-bold text-[#395777]"></span>
+
+                <div class="w-full space-y-2 sm:space-y-3">
+                    <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600 text-sm modal-data-label">Winning Code:</span>
+                        <span id="modal-winner-code" class="font-bold text-[#395777] text-base modal-data-value"></span>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
-                        <span class="font-semibold text-gray-600">Winning Amount:</span>
-                        <span id="modal-winner-amount" class="font-bold text-green-600 text-xl"></span>
+                    <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600 text-sm modal-data-label">Winning Amount:</span>
+                        <span id="modal-winner-amount" class="font-bold text-green-600 text-lg sm:text-xl modal-data-value"></span>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
-                        <span class="font-semibold text-gray-600">Status:</span>
-                        <span id="modal-winner-status" class="font-bold"></span>
+                    <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600 text-sm modal-data-label">Status:</span>
+                        <span id="modal-winner-status" class="font-bold text-base modal-data-value"></span>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-100 rounded- lg">
-                        <span class="font-semibold text-gray-600">Processing Fee:</span>
-                        <span id="modal-winner-fee" class="font-bold text-red-600"></span>
+                    <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-100 rounded-lg">
+                        <span class="font-semibold text-gray-600 text-sm modal-data-label">Processing Fee:</span>
+                        <span id="modal-winner-fee" class="font-bold text-red-600 text-base modal-data-value"></span>
                     </div>
-                    <div class="text-center pt-2">
+                    <div class="text-center pt-2 sm:pt-4">
                         <a id="modal-winner-contact" 
-                           href="#agent-contact-section" 
-                           class="inline-block px-6 py-2 bg-[#ffcd00] text-[#2b4661] font-bold rounded-lg hover:bg-yellow-400 transition duration-200"
-                           onclick="handleAgentContact(event)">
+                            href="#agent-contact-section" 
+                            class="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-[#ffcd00] text-[#2b4661] font-bold rounded-lg hover:bg-yellow-400 transition duration-200 text-sm sm:text-base"
+                            onclick="handleAgentContact(event)">
                             CONTACT YOUR AGENT
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
     <script>
     // --- CONFIG ---
     const API_BASE_URL = window.location.origin; 
