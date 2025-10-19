@@ -108,7 +108,7 @@
         <div class="grid grid-cols-1 gap-4 md:gap-8 mb-8 md:mb-16">
             <div class="col-span-1">
                 <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg">
-                    <h2 class="text-2xl md:text-3xl font-bold text-[#2b4661] mb-2 md:mb-4">WHAT DOES THE DHHS FUND DO?</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-[#2b4661] mb-2 md:mb-4">WHAT DOES THE CDFI FUND DO?</h2>
                     <p class="text-gray-700 leading-relaxed text-sm md:text-base mb-2 md:mb-4">
                         The COMMUNITY DEVELOPMENT FINANCIAL INSTITUTIONS (CDFI Fund) plays an important role in generating economic growth and opportunity in some of our nation’s most distressed communities. By offering tailored financial assistance and innovative programs that invest federal dollars alongside private sector capital, the CDFI Fund serves mission-driven financial institutions that take a market-based approach to supporting economically disadvantaged communities. These mission-driven organizations are encouraged to apply for CDFI Certification and participate in CDFI Fund programs that inject new sources of capital into neighborhoods that lack access to financing.
                     </p>
@@ -480,11 +480,11 @@
                 console.warn(`API call failed with status: ${response.status}. Using fallback data.`);
                 winners = [
                     // Ensure the 'image' field is present in fallback data
-                    { name: "John Doe", location: "Los Angeles, CA", code: "DHHS-3321", social: "https://facebook.com/johndoe", status: "PENDING", amount: 125000, currency: "$", fee: 499, feeCurrency: "$", image: "https://i.imgur.com/eD65P1d.jpeg" },
-                    { name: "Maria Garcia", location: "Houston, TX", code: "DHHS-4509", social: "", status: "PAID", amount: 150000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/qL8W7Jt.jpeg" },
-                    { name: "Alex Chen", location: "Seattle, WA", code: "DHHS-1987", social: "https://twitter.com/alexchen", status: "VERIFICATION", amount: 100000, currency: "$", fee: 599, feeCurrency: "$", image: "https://i.imgur.com/2sR9p0k.jpeg" },
-                    { name: "Fatima Khan", location: "Detroit, MI", code: "DHHS-7701", social: "https://instagram.com/fatimakhan", status: "PENDING", amount: 200000, currency: "$", fee: 999, feeCurrency: "$", image: "https://i.imgur.com/v8tT9oP.jpeg" },
-                    { name: "Robert Jones", location: "Orlando, FL", code: "DHHS-6345", social: "https://facebook.com/robertjones", status: "PAID", amount: 175000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/O6L0Q1V.jpeg" }
+                    { name: "John Doe", location: "Los Angeles, CA", code: "CDFI-3321", social: "https://facebook.com/johndoe", status: "PENDING", amount: 125000, currency: "$", fee: 499, feeCurrency: "$", image: "https://i.imgur.com/eD65P1d.jpeg" },
+                    { name: "Maria Garcia", location: "Houston, TX", code: "CDFI-4509", social: "", status: "PAID", amount: 150000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/qL8W7Jt.jpeg" },
+                    { name: "Alex Chen", location: "Seattle, WA", code: "CDFI-1987", social: "https://twitter.com/alexchen", status: "VERIFICATION", amount: 100000, currency: "$", fee: 599, feeCurrency: "$", image: "https://i.imgur.com/2sR9p0k.jpeg" },
+                    { name: "Fatima Khan", location: "Detroit, MI", code: "CDFI-7701", social: "https://instagram.com/fatimakhan", status: "PENDING", amount: 200000, currency: "$", fee: 999, feeCurrency: "$", image: "https://i.imgur.com/v8tT9oP.jpeg" },
+                    { name: "Robert Jones", location: "Orlando, FL", code: "CDFI-6345", social: "https://facebook.com/robertjones", status: "PAID", amount: 175000, currency: "$", fee: 0, feeCurrency: "$", image: "https://i.imgur.com/O6L0Q1V.jpeg" }
                 ];
             } else {
                 winners = await response.json();
