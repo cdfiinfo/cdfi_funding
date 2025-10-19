@@ -681,5 +681,26 @@
         }
     }
 </script>
+<script type="text/javascript">
+    // 1. Configuration: Defines the appearance and initial settings.
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            // Set 'auto' to have the widget auto-detect the user's language 
+            // and suggest a translation, or use a specific code like 'en' to set the default.
+            pageLanguage: 'en', 
+            
+            // Layout 'SIMPLE' is a compact dropdown/flag selector.
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            
+            // This enables the floating translation pop-up message (banner) 
+            // when the page is first loaded, detecting the user's language/location.
+            autoDisplay: true 
+
+        }, 'google_translate_element');
+    }
+</script>
+<div id="google_translate_element" style="display:none;"></div> 
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
