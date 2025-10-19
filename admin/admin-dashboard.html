@@ -414,10 +414,12 @@
             confirmBtn.textContent = 'Confirm';
             confirmBtn.onclick = () => {
                 modal.classList.add('hidden');
+                modal.style.display = 'none'; // FIX: Ensure modal is hidden
                 if (currentCallback) currentCallback(true);
             };
             cancelBtn.onclick = () => {
                 modal.classList.add('hidden');
+                modal.style.display = 'none'; // FIX: Ensure modal is hidden
                 if (currentCallback) currentCallback(false);
             };
         } else { // 'alert'
@@ -425,6 +427,7 @@
             confirmBtn.textContent = 'OK';
             confirmBtn.onclick = () => {
                 modal.classList.add('hidden');
+                modal.style.display = 'none'; // FIX: Ensure modal is hidden
                 if (currentCallback) currentCallback();
             };
         }
